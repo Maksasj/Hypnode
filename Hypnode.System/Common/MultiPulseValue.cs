@@ -23,7 +23,7 @@ namespace Hypnode.System.Common
         {
             foreach (var item in Value)
                 outputPort?.Send(item);
-            
+
             outputPort?.Close();
         }
     }

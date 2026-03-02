@@ -53,4 +53,10 @@ namespace Hypnode.UnitTests.Logic.Utils
     {
 
     }
+
+    [TestFixture]
+    public class SequenceNodeGraph_ByteSplitterOutTests : ByteSplitterOutTests<SequenceNodeGraph>
+    {
+
+    }
 }

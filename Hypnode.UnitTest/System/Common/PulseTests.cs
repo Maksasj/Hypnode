@@ -49,4 +49,10 @@ namespace Hypnode.UnitTests.System.Common
     {
 
     }
+
+    [TestFixture]
+    public class SequenceNodeGraph_PulseTests : PulseTests<SequenceNodeGraph>
+    {
+
+    }
 }

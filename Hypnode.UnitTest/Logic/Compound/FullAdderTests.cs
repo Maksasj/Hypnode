@@ -98,4 +98,10 @@ namespace Hypnode.UnitTests.Logic.Compound
     {
 
     }
+
+    [TestFixture]
+    public class SequenceNodeGraph_FullAdderTests : FullAdderTests<SequenceNodeGraph>
+    {
+
+    }
 }

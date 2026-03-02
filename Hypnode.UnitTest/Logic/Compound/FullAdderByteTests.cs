@@ -20,7 +20,7 @@ namespace Hypnode.UnitTests.Logic.Compound
         [TestCase(0b11111111, 0b00000000)]
         public async Task TestAdderByteCompound_CorrectValues(byte a, byte b)
         {
-            var graph = new AsyncNodeGraph();
+            var graph = new TGraph();
             var ain = graph.CreateConnection<byte>();
             var bin = graph.CreateConnection<byte>();
 
@@ -48,6 +48,12 @@ namespace Hypnode.UnitTests.Logic.Compound
 
     [TestFixture]
     public class AsyncNodeGrap_FullAdderByteTests : FullAdderByteTests<AsyncNodeGraph>
+    {
+
+    }
+
+    [TestFixture]
+    public class SequenceNodeGraph_FullAdderByteTests : FullAdderByteTests<SequenceNodeGraph>
     {
 
     }

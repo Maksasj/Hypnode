@@ -33,7 +33,7 @@ namespace Hypnode.UnitTests.System.Common
             connection.Setup(c => c.TryReceive(out It.Ref<int>.IsAny)).Returns(false);
 
             var sink = graph.AddNode(new VoidSink<int>());
-                sink.SetPort("_", connection.Object);
+            sink.SetPort("_", connection.Object);
 
             await graph.EvaluateAsync();
 
@@ -47,7 +47,7 @@ namespace Hypnode.UnitTests.System.Common
         public async Task TestVoid_MultipleConnection_TryReceiveOnce(int connectionCount)
         {
             var graph = new TGraph();
-            
+
             var sink = graph.AddNode(new VoidSink<int>());
             var connections = new List<Mock<Connection<int>>>();
 
@@ -91,6 +91,12 @@ namespace Hypnode.UnitTests.System.Common
 
     [TestFixture]
     public class AsyncNodeGraph_VoidTests : VoidTests<AsyncNodeGraph>
+    {
+
+    }
+
+    [TestFixture]
+    public class SequenceNodeGraph_VoidTests : VoidTests<SequenceNodeGraph>
     {
 
     }

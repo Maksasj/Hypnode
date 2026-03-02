@@ -37,4 +37,10 @@ namespace Hypnode.UnitTests.Logic.Gates
     {
 
     }
+
+    [TestFixture]
+    public class SequenceNodeGraph_NotGateTests : NotGateTests<SequenceNodeGraph>
+    {
+
+    }
 }

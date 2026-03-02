@@ -1,12 +1,7 @@
 ﻿using Hypnode.Async;
 using Hypnode.Core;
-using Hypnode.Logic;
 using Hypnode.System.Common;
 using Hypnode.System.Math;
-using Hypnode.UnitTests.System.Common;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Hypnode.UnitTests.System.Math
 {
@@ -39,6 +34,12 @@ namespace Hypnode.UnitTests.System.Math
 
     [TestFixture]
     public class AsyncNodeGraph_SquarerTests : SquarerTests<AsyncNodeGraph>
+    {
+
+    }
+
+    [TestFixture]
+    public class SequenceNodeGraph_SquarerTests : SquarerTests<SequenceNodeGraph>
     {
 
     }

@@ -14,7 +14,7 @@ namespace Hypnode.Async
 
         public override T Receive() => Buffer.Take();
 
-        public override bool TryReceive(out T packet) => Buffer.TryTake(out packet, Timeout.Infinite);
+        public override bool TryReceive(out T packet) => Buffer.TryTake(out packet!, Timeout.Infinite);
 
         public override void Send(T packet) => Buffer.Add(packet);
 
