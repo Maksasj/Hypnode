@@ -1,37 +1,36 @@
 using Hypnode.Core;
 using System.Collections;
 
-namespace Hypnode.System.IO
+namespace Hypnode.System.IO;
+
+public class Assert : INode
 {
-    public class Assert : INode
+    private Connection<bool>? inputPort = null;
+
+    public INode SetPort(string portName, IConnection connection)
     {
-        private Connection<bool>? inputPort = null;
+        if (portName == "IN" && connection is Connection<bool> con) inputPort = con;
+        return this;
+    }
 
-        public INode SetPort(string portName, IConnection connection)
+    public IEnumerator Execute()
+    {
+        if (inputPort is null)
+            throw new InvalidOperationException("Input port is not set");
+
+        while (true)
         {
-            if (portName == "IN" && connection is Connection<bool> con) inputPort = con;
-            return this;
-        }
+            if (inputPort.IsClosed && !inputPort.HasData)
+                break;
 
-        public IEnumerator Execute()
-        {
-            if (inputPort is null)
-                throw new InvalidOperationException("Input port is not set");
-
-            while (true)
+            if (!inputPort.HasData)
             {
-                if (inputPort.IsClosed && !inputPort.HasData)
-                    break;
-
-                if (!inputPort.HasData)
-                {
-                    yield return null;
-                    continue;
-                }
-
-                if (!inputPort.Receive())
-                    throw new InvalidOperationException("Assertion failed");
+                yield return null;
+                continue;
             }
+
+            if (!inputPort.Receive())
+                throw new InvalidOperationException("Assertion failed");
         }
     }
 }

@@ -1,42 +1,41 @@
 using Hypnode.Core;
 using System.Collections;
 
-namespace Hypnode.Logic.Gates
+namespace Hypnode.Logic.Gates;
+
+public class NotGate : INode
 {
-    public class NotGate : INode
+    private Connection<LogicValue>? inputPort = null;
+    private Connection<LogicValue>? outputPort = null;
+
+    public INode SetPort(string portName, IConnection connection)
     {
-        private Connection<LogicValue>? inputPort = null;
-        private Connection<LogicValue>? outputPort = null;
+        if (portName == "IN" && connection is Connection<LogicValue> con0) inputPort = con0;
+        if (portName == "OUT" && connection is Connection<LogicValue> con1) outputPort = con1;
 
-        public INode SetPort(string portName, IConnection connection)
+        return this;
+    }
+
+    public IEnumerator Execute()
+    {
+        if (inputPort is null)
+            throw new InvalidOperationException("Input port is not set");
+
+        while (true)
         {
-            if (portName == "IN" && connection is Connection<LogicValue> con0) inputPort = con0;
-            if (portName == "OUT" && connection is Connection<LogicValue> con1) outputPort = con1;
+            if (inputPort.IsClosed && !inputPort.HasData)
+                break;
 
-            return this;
-        }
-
-        public IEnumerator Execute()
-        {
-            if (inputPort is null)
-                throw new InvalidOperationException("Input port is not set");
-
-            while (true)
+            if (!inputPort.HasData)
             {
-                if (inputPort.IsClosed && !inputPort.HasData)
-                    break;
-
-                if (!inputPort.HasData)
-                {
-                    yield return null;
-                    continue;
-                }
-
-                var packet = inputPort.Receive();
-                outputPort?.Send(packet == LogicValue.True ? LogicValue.False : LogicValue.True);
+                yield return null;
+                continue;
             }
 
-            outputPort?.Close();
+            var packet = inputPort.Receive();
+            outputPort?.Send(packet == LogicValue.True ? LogicValue.False : LogicValue.True);
         }
+
+        outputPort?.Close();
     }
 }

@@ -1,11 +1,10 @@
-namespace Hypnode.Core
+namespace Hypnode.Core;
+
+public interface INodeGraph
 {
-    public interface INodeGraph
-    {
-        public Connection<T> CreateConnection<T>();
+    public Connection<T> CreateConnection<T>();
 
-        public T AddNode<T>(T node) where T : INode;
+    public T AddNode<T>(T node) where T : INode;
 
-        public void Evaluate();
-    }
+    public void Evaluate();
 }

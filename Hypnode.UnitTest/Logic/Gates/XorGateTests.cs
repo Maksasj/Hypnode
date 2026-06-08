@@ -4,50 +4,49 @@ using Hypnode.Logic.Gates;
 using Hypnode.Runtime;
 using Hypnode.System.Common;
 
-namespace Hypnode.UnitTests.Logic.Gates
+namespace Hypnode.UnitTests.Logic.Gates;
+
+public abstract class XorGateTests<TGraph> where TGraph : INodeGraph, new()
 {
-    public abstract class XorGateTests<TGraph> where TGraph : INodeGraph, new()
+    [TestCase(LogicValue.False, LogicValue.False, LogicValue.False)]
+    [TestCase(LogicValue.False, LogicValue.True, LogicValue.True)]
+    [TestCase(LogicValue.True, LogicValue.False, LogicValue.True)]
+    [TestCase(LogicValue.True, LogicValue.True, LogicValue.False)]
+    public void TestXor_CorrectValue(LogicValue a, LogicValue b, LogicValue expect)
     {
-        [TestCase(LogicValue.False, LogicValue.False, LogicValue.False)]
-        [TestCase(LogicValue.False, LogicValue.True, LogicValue.True)]
-        [TestCase(LogicValue.True, LogicValue.False, LogicValue.True)]
-        [TestCase(LogicValue.True, LogicValue.True, LogicValue.False)]
-        public void TestXor_CorrectValue(LogicValue a, LogicValue b, LogicValue expect)
-        {
-            var graph = new TGraph();
-            var connection1 = graph.CreateConnection<LogicValue>();
-            var connection2 = graph.CreateConnection<LogicValue>();
-            var connection3 = graph.CreateConnection<LogicValue>();
+        var graph = new TGraph();
+        var connection1 = graph.CreateConnection<LogicValue>();
+        var connection2 = graph.CreateConnection<LogicValue>();
+        var connection3 = graph.CreateConnection<LogicValue>();
 
-            graph.AddNode(new PulseValue<LogicValue>(a))
-                .SetPort("OUT", connection1);
+        graph.AddNode(new PulseValue<LogicValue>(a))
+            .SetPort("OUT", connection1);
 
-            graph.AddNode(new PulseValue<LogicValue>(b))
-                .SetPort("OUT", connection2);
+        graph.AddNode(new PulseValue<LogicValue>(b))
+            .SetPort("OUT", connection2);
 
-            graph.AddNode(new XorGate())
-                .SetPort("INA", connection1)
-                .SetPort("INB", connection2)
-                .SetPort("OUT", connection3);
+        graph.AddNode(new XorGate())
+            .SetPort("INA", connection1)
+            .SetPort("INB", connection2)
+            .SetPort("OUT", connection3);
 
-            var result = new Register<LogicValue>();
-            graph.AddNode(result).SetPort("IN", connection3);
+        var result = new Register<LogicValue>();
+        graph.AddNode(result).SetPort("IN", connection3);
 
-            graph.Evaluate();
+        graph.Evaluate();
 
-            Assert.That(expect, Is.EqualTo(result.GetValue()));
-        }
+        Assert.That(expect, Is.EqualTo(result.GetValue()));
     }
+}
 
-    [TestFixture]
-    public class AsyncNodeGrap_XorGateTests : XorGateTests<CoroutineNodeGraph>
-    {
+[TestFixture]
+public class AsyncNodeGrap_XorGateTests : XorGateTests<CoroutineNodeGraph>
+{
 
-    }
+}
 
-    [TestFixture]
-    public class SequenceNodeGraph_XorGateTests : XorGateTests<SequenceNodeGraph>
-    {
+[TestFixture]
+public class SequenceNodeGraph_XorGateTests : XorGateTests<SequenceNodeGraph>
+{
 
-    }
 }

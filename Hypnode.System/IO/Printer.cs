@@ -1,36 +1,35 @@
 using Hypnode.Core;
 using System.Collections;
 
-namespace Hypnode.System.IO
+namespace Hypnode.System.IO;
+
+public class Printer<T> : INode
 {
-    public class Printer<T> : INode
+    private Connection<T>? inputPort = null;
+
+    public INode SetPort(string portName, IConnection connection)
     {
-        private Connection<T>? inputPort = null;
+        if (portName == "IN" && connection is Connection<T> conn) inputPort = conn;
+        return this;
+    }
 
-        public INode SetPort(string portName, IConnection connection)
+    public IEnumerator Execute()
+    {
+        if (inputPort is null)
+            throw new InvalidOperationException("Input port is not set");
+
+        while (true)
         {
-            if (portName == "IN" && connection is Connection<T> conn) inputPort = conn;
-            return this;
-        }
+            if (inputPort.IsClosed && !inputPort.HasData)
+                break;
 
-        public IEnumerator Execute()
-        {
-            if (inputPort is null)
-                throw new InvalidOperationException("Input port is not set");
-
-            while (true)
+            if (!inputPort.HasData)
             {
-                if (inputPort.IsClosed && !inputPort.HasData)
-                    break;
-
-                if (!inputPort.HasData)
-                {
-                    yield return null;
-                    continue;
-                }
-
-                Console.WriteLine($"{inputPort.Receive()}");
+                yield return null;
+                continue;
             }
+
+            Console.WriteLine($"{inputPort.Receive()}");
         }
     }
 }

@@ -1,39 +1,38 @@
 using Hypnode.Core;
 using System.Collections;
 
-namespace Hypnode.System.Common
+namespace Hypnode.System.Common;
+
+public class Register<T> : INode
 {
-    public class Register<T> : INode
+    private T? value;
+    private Connection<T>? inputPort = null;
+
+    public INode SetPort(string portName, IConnection connection)
     {
-        private T? value;
-        private Connection<T>? inputPort = null;
+        if (portName == "IN" && connection is Connection<T> con) inputPort = con;
+        return this;
+    }
 
-        public INode SetPort(string portName, IConnection connection)
+    public T? GetValue() => value;
+
+    public IEnumerator Execute()
+    {
+        if (inputPort is null)
+            throw new InvalidOperationException("Input port is not set");
+
+        while (true)
         {
-            if (portName == "IN" && connection is Connection<T> con) inputPort = con;
-            return this;
-        }
+            if (inputPort.IsClosed && !inputPort.HasData)
+                break;
 
-        public T? GetValue() => value;
-
-        public IEnumerator Execute()
-        {
-            if (inputPort is null)
-                throw new InvalidOperationException("Input port is not set");
-
-            while (true)
+            if (!inputPort.HasData)
             {
-                if (inputPort.IsClosed && !inputPort.HasData)
-                    break;
-
-                if (!inputPort.HasData)
-                {
-                    yield return null;
-                    continue;
-                }
-
-                value = inputPort.Receive();
+                yield return null;
+                continue;
             }
+
+            value = inputPort.Receive();
         }
     }
 }

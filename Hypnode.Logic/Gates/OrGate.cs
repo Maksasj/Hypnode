@@ -1,50 +1,49 @@
 using Hypnode.Core;
 using System.Collections;
 
-namespace Hypnode.Logic.Gates
+namespace Hypnode.Logic.Gates;
+
+public class OrGate : INode
 {
-    public class OrGate : INode
+    private Connection<LogicValue>? inputPortA = null;
+    private Connection<LogicValue>? inputPortB = null;
+    private Connection<LogicValue>? outputPort = null;
+
+    public INode SetPort(string portName, IConnection connection)
     {
-        private Connection<LogicValue>? inputPortA = null;
-        private Connection<LogicValue>? inputPortB = null;
-        private Connection<LogicValue>? outputPort = null;
+        if (portName == "INA" && connection is Connection<LogicValue> con0) inputPortA = con0;
+        if (portName == "INB" && connection is Connection<LogicValue> con1) inputPortB = con1;
+        if (portName == "OUT" && connection is Connection<LogicValue> con2) outputPort = con2;
 
-        public INode SetPort(string portName, IConnection connection)
+        return this;
+    }
+
+    public IEnumerator Execute()
+    {
+        if (inputPortA is null)
+            throw new InvalidOperationException("Input port A is not set");
+
+        if (inputPortB is null)
+            throw new InvalidOperationException("Input port B is not set");
+
+        while (true)
         {
-            if (portName == "INA" && connection is Connection<LogicValue> con0) inputPortA = con0;
-            if (portName == "INB" && connection is Connection<LogicValue> con1) inputPortB = con1;
-            if (portName == "OUT" && connection is Connection<LogicValue> con2) outputPort = con2;
+            if ((inputPortA.IsClosed && !inputPortA.HasData) ||
+                (inputPortB.IsClosed && !inputPortB.HasData))
+                break;
 
-            return this;
-        }
-
-        public IEnumerator Execute()
-        {
-            if (inputPortA is null)
-                throw new InvalidOperationException("Input port A is not set");
-
-            if (inputPortB is null)
-                throw new InvalidOperationException("Input port B is not set");
-
-            while (true)
+            if (!inputPortA.HasData || !inputPortB.HasData)
             {
-                if ((inputPortA.IsClosed && !inputPortA.HasData) ||
-                    (inputPortB.IsClosed && !inputPortB.HasData))
-                    break;
-
-                if (!inputPortA.HasData || !inputPortB.HasData)
-                {
-                    yield return null;
-                    continue;
-                }
-
-                var a = inputPortA.Receive();
-                var b = inputPortB.Receive();
-                var result = (a == LogicValue.True || b == LogicValue.True) ? LogicValue.True : LogicValue.False;
-                outputPort?.Send(result);
+                yield return null;
+                continue;
             }
 
-            outputPort?.Close();
+            var a = inputPortA.Receive();
+            var b = inputPortB.Receive();
+            var result = (a == LogicValue.True || b == LogicValue.True) ? LogicValue.True : LogicValue.False;
+            outputPort?.Send(result);
         }
+
+        outputPort?.Close();
     }
 }

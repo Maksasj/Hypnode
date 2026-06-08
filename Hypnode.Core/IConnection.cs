@@ -1,9 +1,8 @@
-namespace Hypnode.Core
+namespace Hypnode.Core;
+
+public interface IConnection
 {
-    public interface IConnection
-    {
-        bool HasData { get; }
-        bool IsClosed { get; }
-        void Close();
-    }
+    bool HasData { get; }
+    bool IsClosed { get; }
+    void Close();
 }
