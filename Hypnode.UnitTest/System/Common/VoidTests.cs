@@ -1,5 +1,4 @@
 using Hypnode.Core;
-using Hypnode.Runtime;
 using Hypnode.System.Common;
 using Moq;
 
@@ -12,7 +11,7 @@ public class VoidTests
     public void TestVoid_SingleConnection()
     {
         var graph = new CoroutineNodeGraph();
-        var conn  = graph.CreateConnection<byte>();
+        var conn = graph.CreateConnection<byte>();
         graph.AddNode(new PulseValue<byte>(1)).SetPort(Ports.Output, conn);
         graph.AddNode(new VoidSink<byte>()).SetPort(VoidSink<byte>.Input, conn);
         graph.Evaluate();
@@ -23,7 +22,7 @@ public class VoidTests
     public void TestVoid_SingleConnection_TryReceiveOnce()
     {
         var graph = new CoroutineNodeGraph();
-        var conn  = new Mock<Connection<int>>();
+        var conn = new Mock<Connection<int>>();
         conn.Setup(c => c.TryReceive(out It.Ref<int>.IsAny)).Returns(false);
         graph.AddNode(new VoidSink<int>()).SetPort(VoidSink<int>.Input, conn.Object);
 
@@ -39,7 +38,7 @@ public class VoidTests
     public void TestVoid_MultipleConnections_TryReceiveOnce(int count)
     {
         var graph = new CoroutineNodeGraph();
-        var sink  = graph.AddNode(new VoidSink<int>());
+        var sink = graph.AddNode(new VoidSink<int>());
         var mocks = Enumerable.Range(0, count).Select(_ =>
         {
             var m = new Mock<Connection<int>>();

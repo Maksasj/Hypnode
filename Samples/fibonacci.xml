@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  fibonacci.xml
+  Generates Fibonacci numbers (0, 1, 1, 2, 3, 5, 8, ...) using feedback loops.
+
+  Graph topology (cyclic):
+
+    delay_a(0) ──→ split_a ──→ printer
+                          └──→ add(IN1)
+                                  │
+    delay_b(1) ──→ split_b ──→ add(IN2)
+          ↑               └──→ delay_a(IN)
+          └───────────────────── add(OUT)
+
+  Each tick: emit a, compute a+b, shift (a,b) → (b, a+b).
+  The one-tick lag in DelayNode is what makes the cycle schedulable.
+
+  Run with:  hypnode Samples/fibonacci.xml
+-->
+<Graph>
+  <Nodes>
+    <Node id="delay_a" type="delay-int">
+      <Parameters><Parameter name="value">0</Parameter></Parameters>
+    </Node>
+    <Node id="delay_b" type="delay-int">
+      <Parameters><Parameter name="value">1</Parameter></Parameters>
+    </Node>
+    <Node id="split_a"  type="splitter-int" />
+    <Node id="split_b"  type="splitter-int" />
+    <Node id="add"      type="add-int"      />
+    <Node id="printer"  type="printer-int"  />
+  </Nodes>
+  <Connections>
+    <!-- a → fan-out: printer + adder -->
+    <Connection type="int">
+      <From node="delay_a" port="OUT" />
+      <To   node="split_a" port="IN"  />
+    </Connection>
+    <Connection type="int">
+      <From node="split_a" port="OUT" />
+      <To   node="printer" port="IN"  />
+    </Connection>
+    <Connection type="int">
+      <From node="split_a" port="OUT" />
+      <To   node="add"     port="IN1" />
+    </Connection>
+
+    <!-- b → fan-out: adder + feedback into a -->
+    <Connection type="int">
+      <From node="delay_b" port="OUT" />
+      <To   node="split_b" port="IN"  />
+    </Connection>
+    <Connection type="int">
+      <From node="split_b" port="OUT" />
+      <To   node="add"     port="IN2" />
+    </Connection>
+    <Connection type="int">
+      <From node="split_b" port="OUT" />
+      <To   node="delay_a" port="IN"  />
+    </Connection>
+
+    <!-- sum feeds back into b (the cycle) -->
+    <Connection type="int">
+      <From node="add"     port="OUT" />
+      <To   node="delay_b" port="IN"  />
+    </Connection>
+  </Connections>
+</Graph>

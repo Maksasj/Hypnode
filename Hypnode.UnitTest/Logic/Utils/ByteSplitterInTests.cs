@@ -1,7 +1,6 @@
 using Hypnode.Core;
 using Hypnode.Logic;
 using Hypnode.Logic.Utils;
-using Hypnode.Runtime;
 using Hypnode.System.Common;
 
 namespace Hypnode.UnitTests.Logic.Utils;
@@ -10,17 +9,17 @@ namespace Hypnode.UnitTests.Logic.Utils;
 public class ByteSplitterInTests
 {
     [TestCase(0b00000000, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False)]
-    [TestCase(0b10000000, LogicValue.True,  LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False)]
-    [TestCase(0b11111111, LogicValue.True,  LogicValue.True,  LogicValue.True,  LogicValue.True,  LogicValue.True,  LogicValue.True,  LogicValue.True,  LogicValue.True)]
-    [TestCase(0b01010101, LogicValue.False, LogicValue.True,  LogicValue.False, LogicValue.True,  LogicValue.False, LogicValue.True,  LogicValue.False, LogicValue.True)]
-    [TestCase(0b10101010, LogicValue.True,  LogicValue.False, LogicValue.True,  LogicValue.False, LogicValue.True,  LogicValue.False, LogicValue.True,  LogicValue.False)]
+    [TestCase(0b10000000, LogicValue.True, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False)]
+    [TestCase(0b11111111, LogicValue.True, LogicValue.True, LogicValue.True, LogicValue.True, LogicValue.True, LogicValue.True, LogicValue.True, LogicValue.True)]
+    [TestCase(0b01010101, LogicValue.False, LogicValue.True, LogicValue.False, LogicValue.True, LogicValue.False, LogicValue.True, LogicValue.False, LogicValue.True)]
+    [TestCase(0b10101010, LogicValue.True, LogicValue.False, LogicValue.True, LogicValue.False, LogicValue.True, LogicValue.False, LogicValue.True, LogicValue.False)]
     public void TestByteSplitterIn_CorrectValues(byte value,
         LogicValue b7e, LogicValue b6e, LogicValue b5e, LogicValue b4e,
         LogicValue b3e, LogicValue b2e, LogicValue b1e, LogicValue b0e)
     {
         var graph = new CoroutineNodeGraph();
         var input = graph.CreateConnection<byte>();
-        var bits  = Enumerable.Range(0, 8).Select(_ => graph.CreateConnection<LogicValue>()).ToArray();
+        var bits = Enumerable.Range(0, 8).Select(_ => graph.CreateConnection<LogicValue>()).ToArray();
 
         graph.AddNode(new PulseValue<byte>(value)).SetPort(Ports.Output, input);
 

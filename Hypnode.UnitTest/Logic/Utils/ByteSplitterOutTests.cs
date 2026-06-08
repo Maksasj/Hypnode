@@ -1,7 +1,6 @@
 using Hypnode.Core;
 using Hypnode.Logic;
 using Hypnode.Logic.Utils;
-using Hypnode.Runtime;
 using Hypnode.System.Common;
 
 namespace Hypnode.UnitTests.Logic.Utils;
@@ -10,10 +9,10 @@ namespace Hypnode.UnitTests.Logic.Utils;
 public class ByteSplitterOutTests
 {
     [TestCase(0b00000000, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False)]
-    [TestCase(0b10000000, LogicValue.True,  LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False)]
-    [TestCase(0b11111111, LogicValue.True,  LogicValue.True,  LogicValue.True,  LogicValue.True,  LogicValue.True,  LogicValue.True,  LogicValue.True,  LogicValue.True)]
-    [TestCase(0b01010101, LogicValue.False, LogicValue.True,  LogicValue.False, LogicValue.True,  LogicValue.False, LogicValue.True,  LogicValue.False, LogicValue.True)]
-    [TestCase(0b10101010, LogicValue.True,  LogicValue.False, LogicValue.True,  LogicValue.False, LogicValue.True,  LogicValue.False, LogicValue.True,  LogicValue.False)]
+    [TestCase(0b10000000, LogicValue.True, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False)]
+    [TestCase(0b11111111, LogicValue.True, LogicValue.True, LogicValue.True, LogicValue.True, LogicValue.True, LogicValue.True, LogicValue.True, LogicValue.True)]
+    [TestCase(0b01010101, LogicValue.False, LogicValue.True, LogicValue.False, LogicValue.True, LogicValue.False, LogicValue.True, LogicValue.False, LogicValue.True)]
+    [TestCase(0b10101010, LogicValue.True, LogicValue.False, LogicValue.True, LogicValue.False, LogicValue.True, LogicValue.False, LogicValue.True, LogicValue.False)]
     public void TestByteSplitterOut_CorrectValues(byte expected,
         LogicValue b7, LogicValue b6, LogicValue b5, LogicValue b4,
         LogicValue b3, LogicValue b2, LogicValue b1, LogicValue b0)

@@ -1,5 +1,4 @@
 using Hypnode.Core;
-using Hypnode.Runtime;
 using Hypnode.System.Common;
 using Moq;
 
@@ -11,9 +10,9 @@ public class ZipNodeTests
     [Test]
     public void TestZip_SinglePair_CorrectTuple()
     {
-        var graph   = new CoroutineNodeGraph();
-        var conn1   = graph.CreateConnection<int>();
-        var conn2   = graph.CreateConnection<string>();
+        var graph = new CoroutineNodeGraph();
+        var conn1 = graph.CreateConnection<int>();
+        var conn2 = graph.CreateConnection<string>();
         var connOut = graph.CreateConnection<(int, string)>();
 
         graph.AddNode(new PulseValue<int>(42)).SetPort(Ports.Output, conn1);
@@ -34,9 +33,9 @@ public class ZipNodeTests
     [Test]
     public void TestZip_MultiplePackets_LastPairReceived()
     {
-        var graph   = new CoroutineNodeGraph();
-        var conn1   = graph.CreateConnection<int>();
-        var conn2   = graph.CreateConnection<int>();
+        var graph = new CoroutineNodeGraph();
+        var conn1 = graph.CreateConnection<int>();
+        var conn2 = graph.CreateConnection<int>();
         var connOut = graph.CreateConnection<(int, int)>();
 
         graph.AddNode(new MultiPulseValue<int>([1, 2, 3])).SetPort(Ports.Output, conn1);
@@ -57,9 +56,9 @@ public class ZipNodeTests
     [Test]
     public void TestZip_ClosesOutput()
     {
-        var graph   = new CoroutineNodeGraph();
-        var conn1   = graph.CreateConnection<int>();
-        var conn2   = graph.CreateConnection<int>();
+        var graph = new CoroutineNodeGraph();
+        var conn1 = graph.CreateConnection<int>();
+        var conn2 = graph.CreateConnection<int>();
         var connOut = new Mock<Connection<(int, int)>>();
 
         graph.AddNode(new PulseValue<int>(1)).SetPort(Ports.Output, conn1);
@@ -77,9 +76,9 @@ public class ZipNodeTests
     [Test]
     public void TestZip_SumOfPairs()
     {
-        var graph   = new CoroutineNodeGraph();
-        var conn1   = graph.CreateConnection<int>();
-        var conn2   = graph.CreateConnection<int>();
+        var graph = new CoroutineNodeGraph();
+        var conn1 = graph.CreateConnection<int>();
+        var conn2 = graph.CreateConnection<int>();
         var connZip = graph.CreateConnection<(int, int)>();
         var connOut = graph.CreateConnection<int>();
 

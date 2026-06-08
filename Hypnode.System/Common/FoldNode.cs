@@ -7,18 +7,18 @@ public class FoldNode<TIn, TOut> : INode
 {
     private readonly TOut _seed;
     private readonly Func<TOut, TIn, TOut> _folder;
-    private Connection<TIn>?  _inputPort  = null;
+    private Connection<TIn>? _inputPort = null;
     private Connection<TOut>? _outputPort = null;
 
     public FoldNode(TOut seed, Func<TOut, TIn, TOut> folder)
     {
-        _seed   = seed;
+        _seed = seed;
         _folder = folder;
     }
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Ports.Input  && connection is Connection<TIn>  con0) _inputPort  = con0;
+        if (portName == Ports.Input && connection is Connection<TIn> con0) _inputPort = con0;
         if (portName == Ports.Output && connection is Connection<TOut> con1) _outputPort = con1;
         return this;
     }

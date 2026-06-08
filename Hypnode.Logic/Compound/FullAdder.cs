@@ -1,6 +1,5 @@
 using Hypnode.Core;
 using Hypnode.Logic.Gates;
-using Hypnode.Runtime;
 using Hypnode.System.Common;
 using System.Collections;
 
@@ -24,10 +23,10 @@ public class FullAdder : INode
     {
         var result = portName switch
         {
-            InputA      => NodeExtensions.TryAttach(ref _aPort,    connection),
-            InputB      => NodeExtensions.TryAttach(ref _bPort,    connection),
-            InputC      => NodeExtensions.TryAttach(ref _carryIn,  connection),
-            OutputSum   => NodeExtensions.TryAttach(ref _sum,      connection),
+            InputA => NodeExtensions.TryAttach(ref _aPort, connection),
+            InputB => NodeExtensions.TryAttach(ref _bPort, connection),
+            InputC => NodeExtensions.TryAttach(ref _carryIn, connection),
+            OutputSum => NodeExtensions.TryAttach(ref _sum, connection),
             OutputCarry => NodeExtensions.TryAttach(ref _carryOut, connection),
             _ => throw new InvalidOperationException($"Unknown port '{portName}'"),
         };
@@ -40,8 +39,8 @@ public class FullAdder : INode
 
     public IEnumerator Execute()
     {
-        if (_aPort is null)   throw new InvalidOperationException("Input port A is not set");
-        if (_bPort is null)   throw new InvalidOperationException("Input port B is not set");
+        if (_aPort is null) throw new InvalidOperationException("Input port A is not set");
+        if (_bPort is null) throw new InvalidOperationException("Input port B is not set");
         if (_carryIn is null) throw new InvalidOperationException("Input port C is not set");
 
         while (true)
@@ -62,9 +61,9 @@ public class FullAdder : INode
             var c = _carryIn.Receive();
 
             var graph = new CoroutineNodeGraph();
-            var aToDemux     = graph.CreateConnection<LogicValue>();
-            var bToDemux     = graph.CreateConnection<LogicValue>();
-            var cToDemux     = graph.CreateConnection<LogicValue>();
+            var aToDemux = graph.CreateConnection<LogicValue>();
+            var bToDemux = graph.CreateConnection<LogicValue>();
+            var cToDemux = graph.CreateConnection<LogicValue>();
             var demux1ToXor1 = graph.CreateConnection<LogicValue>();
             var demux1ToAnd2 = graph.CreateConnection<LogicValue>();
             var demux2ToXor1 = graph.CreateConnection<LogicValue>();
@@ -74,10 +73,10 @@ public class FullAdder : INode
             var xor1ToDemux4 = graph.CreateConnection<LogicValue>();
             var demux4ToXor2 = graph.CreateConnection<LogicValue>();
             var demux4ToAnd1 = graph.CreateConnection<LogicValue>();
-            var and1ToOr     = graph.CreateConnection<LogicValue>();
-            var and2ToOr     = graph.CreateConnection<LogicValue>();
-            var toSum        = graph.CreateConnection<LogicValue>();
-            var toCarryOut   = graph.CreateConnection<LogicValue>();
+            var and1ToOr = graph.CreateConnection<LogicValue>();
+            var and2ToOr = graph.CreateConnection<LogicValue>();
+            var toSum = graph.CreateConnection<LogicValue>();
+            var toCarryOut = graph.CreateConnection<LogicValue>();
 
             graph.AddNode(new PulseValue<LogicValue>(a)).SetPort(Ports.Output, aToDemux);
             graph.AddNode(new Splitter<LogicValue>()).SetPort(Ports.Input, aToDemux).SetPort(Ports.Output, demux1ToXor1).SetPort(Ports.Output, demux1ToAnd2);
@@ -92,7 +91,7 @@ public class FullAdder : INode
             graph.AddNode(new AndGate()).SetPort(BinaryLogicGate.InputA, demux1ToAnd2).SetPort(BinaryLogicGate.InputB, demux2ToAnd2).SetPort(BinaryLogicGate.Output, and2ToOr);
             graph.AddNode(new OrGate()).SetPort(BinaryLogicGate.InputA, and2ToOr).SetPort(BinaryLogicGate.InputB, and1ToOr).SetPort(BinaryLogicGate.Output, toCarryOut);
 
-            var sumCell   = new Register<LogicValue>();
+            var sumCell = new Register<LogicValue>();
             var carryCell = new Register<LogicValue>();
             graph.AddNode(sumCell).SetPort(Ports.Input, toSum);
             graph.AddNode(carryCell).SetPort(Ports.Input, toCarryOut);

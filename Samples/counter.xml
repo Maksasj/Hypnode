@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  counter.xml
+  Counts from 1 to infinity and prints each number.
+
+  Run with:  hypnode Samples/counter.xml
+-->
+<Graph>
+  <Nodes>
+    <Node id="gen"   type="generator"   />
+    <Node id="count" type="fold-count"  />
+    <Node id="print" type="printer-int" />
+  </Nodes>
+  <Connections>
+    <Connection type="int">
+      <From node="gen"   port="OUT" />
+      <To   node="count" port="IN"  />
+    </Connection>
+    <Connection type="int">
+      <From node="count" port="OUT" />
+      <To   node="print" port="IN"  />
+    </Connection>
+  </Connections>
+</Graph>

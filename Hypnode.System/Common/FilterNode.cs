@@ -6,14 +6,14 @@ namespace Hypnode.System.Common;
 public class FilterNode<T> : INode
 {
     private readonly Func<T, bool> _predicate;
-    private Connection<T>? _inputPort  = null;
+    private Connection<T>? _inputPort = null;
     private Connection<T>? _outputPort = null;
 
     public FilterNode(Func<T, bool> predicate) { _predicate = predicate; }
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Ports.Input  && connection is Connection<T> con0) _inputPort  = con0;
+        if (portName == Ports.Input && connection is Connection<T> con0) _inputPort = con0;
         if (portName == Ports.Output && connection is Connection<T> con1) _outputPort = con1;
         return this;
     }

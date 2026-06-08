@@ -1,14 +1,14 @@
-using Hypnode.Core;
-
-namespace Hypnode.Runtime;
+namespace Hypnode.Core;
 
 public class QueueConnection<T> : Connection<T>
 {
     private readonly Queue<T> _buffer = new();
     private bool _closed = false;
+    private bool _hadActivity = false;
 
     public override bool HasData => _buffer.Count > 0;
     public override bool IsClosed => _closed;
+    public override bool HadActivity => _hadActivity;
 
     public override T Receive()
     {
@@ -27,8 +27,10 @@ public class QueueConnection<T> : Connection<T>
     public override void Send(T packet)
     {
         if (_closed) throw new InvalidOperationException("Cannot send to a closed connection");
+        _hadActivity = true;
         _buffer.Enqueue(packet);
     }
 
     public override void Close() => _closed = true;
+    public override void ResetActivity() => _hadActivity = false;
 }
