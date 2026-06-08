@@ -1,5 +1,6 @@
 using Hypnode.Core;
 using Hypnode.Logic.Compound;
+using Hypnode.Logic.Gates;
 using Hypnode.Runtime;
 using Hypnode.System.Common;
 
@@ -25,16 +26,16 @@ public abstract class FullAdderByteTests<TGraph> where TGraph : INodeGraph, new(
         var bin = graph.CreateConnection<byte>();
         var outsum = graph.CreateConnection<byte>();
 
-        graph.AddNode(new PulseValue<byte>(a)).SetPort("OUT", ain);
-        graph.AddNode(new PulseValue<byte>(b)).SetPort("OUT", bin);
+        graph.AddNode(new PulseValue<byte>(a)).SetPort(Ports.Output, ain);
+        graph.AddNode(new PulseValue<byte>(b)).SetPort(Ports.Output, bin);
 
         graph.AddNode(new FullAdderByte(new TGraph()))
-            .SetPort("INA", ain)
-            .SetPort("INB", bin)
-            .SetPort("OUTSUM", outsum);
+            .SetPort(AndGate.InputA, ain)
+            .SetPort(AndGate.InputB, bin)
+            .SetPort(FullAdder.OutputSum, outsum);
 
         var sumCell = new Register<byte>();
-        graph.AddNode(sumCell).SetPort("IN", outsum);
+        graph.AddNode(sumCell).SetPort(Ports.Input, outsum);
 
         graph.Evaluate();
 

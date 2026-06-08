@@ -5,17 +5,16 @@ namespace Hypnode.System.Common;
 
 public class MultiPulseValue<T> : INode
 {
+    public const string Output = "OUT";
+
     private IEnumerable<T> Value { get; set; }
     private Connection<T>? _outputPort = null;
 
-    public MultiPulseValue(IEnumerable<T> value)
-    {
-        Value = value;
-    }
+    public MultiPulseValue(IEnumerable<T> value) { Value = value; }
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == "OUT" && connection is Connection<T> con) _outputPort = con;
+        if (portName == Output && connection is Connection<T> con) _outputPort = con;
         return this;
     }
 

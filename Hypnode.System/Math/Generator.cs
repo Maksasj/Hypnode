@@ -5,11 +5,13 @@ namespace Hypnode.System.Math;
 
 public class Generator : INode
 {
+    public const string Output = "OUT";
+
     private Connection<int>? _outputPort = null;
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == "OUT" && connection is Connection<int> con) _outputPort = con;
+        if (portName == Output && connection is Connection<int> con) _outputPort = con;
         return this;
     }
 

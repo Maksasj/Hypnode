@@ -20,18 +20,18 @@ public abstract class XorGateTests<TGraph> where TGraph : INodeGraph, new()
         var connection3 = graph.CreateConnection<LogicValue>();
 
         graph.AddNode(new PulseValue<LogicValue>(a))
-            .SetPort("OUT", connection1);
+            .SetPort(Ports.Output, connection1);
 
         graph.AddNode(new PulseValue<LogicValue>(b))
-            .SetPort("OUT", connection2);
+            .SetPort(Ports.Output, connection2);
 
         graph.AddNode(new XorGate())
-            .SetPort("INA", connection1)
-            .SetPort("INB", connection2)
-            .SetPort("OUT", connection3);
+            .SetPort(AndGate.InputA, connection1)
+            .SetPort(AndGate.InputB, connection2)
+            .SetPort(Ports.Output, connection3);
 
         var result = new Register<LogicValue>();
-        graph.AddNode(result).SetPort("IN", connection3);
+        graph.AddNode(result).SetPort(Ports.Input, connection3);
 
         graph.Evaluate();
 

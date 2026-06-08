@@ -27,10 +27,10 @@ public abstract class ByteSplitterInTests<TGraph> where TGraph : INodeGraph, new
         var b6c = graph.CreateConnection<LogicValue>();
         var b7c = graph.CreateConnection<LogicValue>();
 
-        graph.AddNode(new PulseValue<byte>(value)).SetPort("OUT", input);
+        graph.AddNode(new PulseValue<byte>(value)).SetPort(Ports.Output, input);
 
         graph.AddNode(new ByteSplitterIn())
-            .SetPort("IN", input)
+            .SetPort(Ports.Input, input)
             .SetPort(0.ToString(), b0c)
             .SetPort(1.ToString(), b1c)
             .SetPort(2.ToString(), b2c)
@@ -40,14 +40,14 @@ public abstract class ByteSplitterInTests<TGraph> where TGraph : INodeGraph, new
             .SetPort(6.ToString(), b6c)
             .SetPort(7.ToString(), b7c);
 
-        var b0 = new Register<LogicValue>(); graph.AddNode(b0).SetPort("IN", b0c);
-        var b1 = new Register<LogicValue>(); graph.AddNode(b1).SetPort("IN", b1c);
-        var b2 = new Register<LogicValue>(); graph.AddNode(b2).SetPort("IN", b2c);
-        var b3 = new Register<LogicValue>(); graph.AddNode(b3).SetPort("IN", b3c);
-        var b4 = new Register<LogicValue>(); graph.AddNode(b4).SetPort("IN", b4c);
-        var b5 = new Register<LogicValue>(); graph.AddNode(b5).SetPort("IN", b5c);
-        var b6 = new Register<LogicValue>(); graph.AddNode(b6).SetPort("IN", b6c);
-        var b7 = new Register<LogicValue>(); graph.AddNode(b7).SetPort("IN", b7c);
+        var b0 = new Register<LogicValue>(); graph.AddNode(b0).SetPort(Ports.Input, b0c);
+        var b1 = new Register<LogicValue>(); graph.AddNode(b1).SetPort(Ports.Input, b1c);
+        var b2 = new Register<LogicValue>(); graph.AddNode(b2).SetPort(Ports.Input, b2c);
+        var b3 = new Register<LogicValue>(); graph.AddNode(b3).SetPort(Ports.Input, b3c);
+        var b4 = new Register<LogicValue>(); graph.AddNode(b4).SetPort(Ports.Input, b4c);
+        var b5 = new Register<LogicValue>(); graph.AddNode(b5).SetPort(Ports.Input, b5c);
+        var b6 = new Register<LogicValue>(); graph.AddNode(b6).SetPort(Ports.Input, b6c);
+        var b7 = new Register<LogicValue>(); graph.AddNode(b7).SetPort(Ports.Input, b7c);
 
         graph.Evaluate();
 

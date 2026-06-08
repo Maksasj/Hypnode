@@ -28,17 +28,17 @@ public abstract class ByteSplitterOutTests<TGraph> where TGraph : INodeGraph, ne
 
         var splitter = graph.AddNode(new ByteSplitterOut());
 
-        graph.AddConnection<LogicValue>(b0n, "OUT", splitter, "0");
-        graph.AddConnection<LogicValue>(b1n, "OUT", splitter, "1");
-        graph.AddConnection<LogicValue>(b2n, "OUT", splitter, "2");
-        graph.AddConnection<LogicValue>(b3n, "OUT", splitter, "3");
-        graph.AddConnection<LogicValue>(b4n, "OUT", splitter, "4");
-        graph.AddConnection<LogicValue>(b5n, "OUT", splitter, "5");
-        graph.AddConnection<LogicValue>(b6n, "OUT", splitter, "6");
-        graph.AddConnection<LogicValue>(b7n, "OUT", splitter, "7");
+        graph.AddConnection<LogicValue>(b0n, Ports.Output, splitter, "0");
+        graph.AddConnection<LogicValue>(b1n, Ports.Output, splitter, "1");
+        graph.AddConnection<LogicValue>(b2n, Ports.Output, splitter, "2");
+        graph.AddConnection<LogicValue>(b3n, Ports.Output, splitter, "3");
+        graph.AddConnection<LogicValue>(b4n, Ports.Output, splitter, "4");
+        graph.AddConnection<LogicValue>(b5n, Ports.Output, splitter, "5");
+        graph.AddConnection<LogicValue>(b6n, Ports.Output, splitter, "6");
+        graph.AddConnection<LogicValue>(b7n, Ports.Output, splitter, "7");
 
         var result = graph.AddNode(new Register<byte>());
-        graph.AddConnection<byte>(splitter, "OUT", result, "IN");
+        graph.AddConnection<byte>(splitter, Ports.Output, result, Ports.Input);
 
         graph.Evaluate();
 

@@ -1,4 +1,5 @@
 using Hypnode.Core;
+using Hypnode.Logic;
 using Hypnode.Runtime;
 using Hypnode.System.Common;
 using Moq;
@@ -13,8 +14,8 @@ public abstract class VoidTests<TGraph> where TGraph : INodeGraph, new()
         var graph = new TGraph();
         var connection = graph.CreateConnection<byte>();
 
-        graph.AddNode(new PulseValue<byte>(1)).SetPort("OUT", connection);
-        graph.AddNode(new VoidSink<byte>()).SetPort("_", connection);
+        graph.AddNode(new PulseValue<byte>(1)).SetPort(Ports.Output, connection);
+        graph.AddNode(new VoidSink<byte>()).SetPort(VoidSink<LogicValue>.Input, connection);
 
         graph.Evaluate();
 
@@ -30,7 +31,7 @@ public abstract class VoidTests<TGraph> where TGraph : INodeGraph, new()
         connection.Setup(c => c.TryReceive(out It.Ref<int>.IsAny)).Returns(false);
 
         var sink = graph.AddNode(new VoidSink<int>());
-        sink.SetPort("_", connection.Object);
+        sink.SetPort(VoidSink<LogicValue>.Input, connection.Object);
 
         graph.Evaluate();
 
@@ -54,7 +55,7 @@ public abstract class VoidTests<TGraph> where TGraph : INodeGraph, new()
             connections.Add(connection);
             connection.Setup(c => c.TryReceive(out It.Ref<int>.IsAny)).Returns(false);
 
-            sink.SetPort("_", connection.Object);
+            sink.SetPort(VoidSink<LogicValue>.Input, connection.Object);
         }
 
         graph.Evaluate();
@@ -70,12 +71,12 @@ public abstract class VoidTests<TGraph> where TGraph : INodeGraph, new()
         var connection1 = graph.CreateConnection<byte>();
         var connection2 = graph.CreateConnection<byte>();
 
-        graph.AddNode(new PulseValue<byte>(1)).SetPort("OUT", connection1);
-        graph.AddNode(new PulseValue<byte>(1)).SetPort("OUT", connection2);
+        graph.AddNode(new PulseValue<byte>(1)).SetPort(Ports.Output, connection1);
+        graph.AddNode(new PulseValue<byte>(1)).SetPort(Ports.Output, connection2);
 
         graph.AddNode(new VoidSink<byte>())
-            .SetPort("_", connection1)
-            .SetPort("_", connection2);
+            .SetPort(VoidSink<LogicValue>.Input, connection1)
+            .SetPort(VoidSink<LogicValue>.Input, connection2);
 
         graph.Evaluate();
 

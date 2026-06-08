@@ -17,14 +17,14 @@ public abstract class NotGateTests<TGraph> where TGraph : INodeGraph, new()
         var connection2 = graph.CreateConnection<LogicValue>();
 
         graph.AddNode(new PulseValue<LogicValue>(value))
-            .SetPort("OUT", connection1);
+            .SetPort(Ports.Output, connection1);
 
         graph.AddNode(new NotGate())
-            .SetPort("IN", connection1)
-            .SetPort("OUT", connection2);
+            .SetPort(Ports.Input, connection1)
+            .SetPort(Ports.Output, connection2);
 
         var result = new Register<LogicValue>();
-        graph.AddNode(result).SetPort("IN", connection2);
+        graph.AddNode(result).SetPort(Ports.Input, connection2);
 
         graph.Evaluate();
 
