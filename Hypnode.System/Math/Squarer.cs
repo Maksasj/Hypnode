@@ -1,4 +1,5 @@
-﻿using Hypnode.Core;
+using Hypnode.Core;
+using System.Collections;
 
 namespace Hypnode.System.Math
 {
@@ -11,17 +12,28 @@ namespace Hypnode.System.Math
         {
             if (portName == "IN" && connection is Connection<int> con0) inputPort = con0;
             if (portName == "OUT" && connection is Connection<int> con1) outputPort = con1;
-
             return this;
         }
 
-        public async Task ExecuteAsync()
+        public IEnumerator Execute()
         {
             if (inputPort is null)
                 throw new InvalidOperationException("Input port is not set");
 
-            while (inputPort.TryReceive(out var packet))
+            while (true)
+            {
+                if (inputPort.IsClosed && !inputPort.HasData)
+                    break;
+
+                if (!inputPort.HasData)
+                {
+                    yield return null;
+                    continue;
+                }
+
+                var packet = inputPort.Receive();
                 outputPort?.Send(packet * packet);
+            }
 
             outputPort?.Close();
         }

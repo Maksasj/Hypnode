@@ -1,20 +1,19 @@
-﻿using Hypnode.Async;
 using Hypnode.Core;
 using Hypnode.Logic;
 using Hypnode.Logic.Utils;
+using Hypnode.Runtime;
 using Hypnode.System.Common;
 
 namespace Hypnode.UnitTests.Logic.Utils
 {
     public abstract class ByteSplitterOutTests<TGraph> where TGraph : INodeGraph, new()
     {
-
         [TestCase(0b00000000, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False)]
         [TestCase(0b10000000, LogicValue.True, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False)]
         [TestCase(0b11111111, LogicValue.True, LogicValue.True, LogicValue.True, LogicValue.True, LogicValue.True, LogicValue.True, LogicValue.True, LogicValue.True)]
         [TestCase(0b01010101, LogicValue.False, LogicValue.True, LogicValue.False, LogicValue.True, LogicValue.False, LogicValue.True, LogicValue.False, LogicValue.True)]
         [TestCase(0b10101010, LogicValue.True, LogicValue.False, LogicValue.True, LogicValue.False, LogicValue.True, LogicValue.False, LogicValue.True, LogicValue.False)]
-        public async Task TestByteSplitterOut_CorrectValues(byte expected, LogicValue b7, LogicValue b6, LogicValue b5, LogicValue b4, LogicValue b3, LogicValue b2, LogicValue b1, LogicValue b0)
+        public void TestByteSplitterOut_CorrectValues(byte expected, LogicValue b7, LogicValue b6, LogicValue b5, LogicValue b4, LogicValue b3, LogicValue b2, LogicValue b1, LogicValue b0)
         {
             var graph = new TGraph();
 
@@ -39,17 +38,16 @@ namespace Hypnode.UnitTests.Logic.Utils
             graph.AddConnection<LogicValue>(b7n, "OUT", splitter, "7");
 
             var result = graph.AddNode(new Register<byte>());
-
             graph.AddConnection<byte>(splitter, "OUT", result, "IN");
 
-            await graph.EvaluateAsync();
+            graph.Evaluate();
 
             Assert.That(result.GetValue(), Is.EqualTo(expected));
         }
     }
 
     [TestFixture]
-    public class AsyncNodeGraph_ByteSplitterOutTests : ByteSplitterOutTests<AsyncNodeGraph>
+    public class CoroutineNodeGraph_ByteSplitterOutTests : ByteSplitterOutTests<CoroutineNodeGraph>
     {
 
     }

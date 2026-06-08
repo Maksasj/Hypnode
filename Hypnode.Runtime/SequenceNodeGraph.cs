@@ -1,6 +1,6 @@
 using Hypnode.Core;
 
-namespace Hypnode.Async
+namespace Hypnode.Runtime
 {
     public class SequenceNodeGraph : INodeGraph
     {
@@ -26,12 +26,16 @@ namespace Hypnode.Async
             return node;
         }
 
-        public async Task EvaluateAsync()
+        public void Evaluate()
         {
-            // Execute nodes sequentially (one at a time) in the order they were added
             foreach (var node in Nodes)
             {
-                await node.ExecuteAsync();
+                var coroutine = node.Execute();
+                while (coroutine.MoveNext())
+                {
+                    if (coroutine.Current is INodeGraph subGraph)
+                        subGraph.Evaluate();
+                }
             }
         }
     }

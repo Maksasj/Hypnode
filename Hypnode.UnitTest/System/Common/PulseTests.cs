@@ -1,6 +1,6 @@
-﻿using Hypnode.Async;
 using Hypnode.Core;
 using Hypnode.Logic;
+using Hypnode.Runtime;
 using Hypnode.System.Common;
 using Moq;
 
@@ -10,7 +10,7 @@ namespace Hypnode.UnitTests.System.Common
     {
         [TestCase(LogicValue.False)]
         [TestCase(LogicValue.True)]
-        public async Task TestPulse_CorrectValue(LogicValue value)
+        public void TestPulse_CorrectValue(LogicValue value)
         {
             var graph = new TGraph();
 
@@ -19,7 +19,7 @@ namespace Hypnode.UnitTests.System.Common
 
             graph.AddConnection<LogicValue>(pulse, "OUT", result, "IN");
 
-            await graph.EvaluateAsync();
+            graph.Evaluate();
 
             Assert.That(result.GetValue(), Is.EqualTo(value));
         }
@@ -28,7 +28,7 @@ namespace Hypnode.UnitTests.System.Common
         [TestCase(100)]
         [TestCase(20000)]
         [TestCase(-100)]
-        public async Task TestPulse_SendCloseExecuteOnce(int value)
+        public void TestPulse_SendCloseExecuteOnce(int value)
         {
             var graph = new TGraph();
 
@@ -37,7 +37,7 @@ namespace Hypnode.UnitTests.System.Common
 
             pulse.SetPort("OUT", connection.Object);
 
-            await graph.EvaluateAsync();
+            graph.Evaluate();
 
             connection.Verify(c => c.Send(value), Times.Once);
             connection.Verify(c => c.Close(), Times.Once);
@@ -45,7 +45,7 @@ namespace Hypnode.UnitTests.System.Common
     }
 
     [TestFixture]
-    public class AsyncNodeGraph_PulseTests : PulseTests<AsyncNodeGraph>
+    public class CoroutineNodeGraph_PulseTests : PulseTests<CoroutineNodeGraph>
     {
 
     }

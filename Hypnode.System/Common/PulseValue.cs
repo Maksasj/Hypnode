@@ -1,11 +1,11 @@
-﻿using Hypnode.Core;
+using Hypnode.Core;
+using System.Collections;
 
 namespace Hypnode.System.Common
 {
     public class PulseValue<T> : INode
     {
         private T Value { get; set; }
-
         private Connection<T>? outputPort = null;
 
         public PulseValue(T value)
@@ -19,10 +19,11 @@ namespace Hypnode.System.Common
             return this;
         }
 
-        public async Task ExecuteAsync()
+        public IEnumerator Execute()
         {
             outputPort?.Send(Value);
             outputPort?.Close();
+            yield break;
         }
     }
 }

@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Hypnode.Async\Hypnode.Async.csproj" />
+    <ProjectReference Include="..\Hypnode.Runtime\Hypnode.Runtime.csproj" />
     <ProjectReference Include="..\Hypnode.Logic\Hypnode.Logic.csproj" />
     <ProjectReference Include="..\Hypnode.System\Hypnode.System.csproj" />
   </ItemGroup>

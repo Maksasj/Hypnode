@@ -1,4 +1,4 @@
-﻿namespace Hypnode.Core
+namespace Hypnode.Core
 {
     public interface INodeGraph
     {
@@ -6,6 +6,6 @@
 
         public T AddNode<T>(T node) where T : INode;
 
-        public Task EvaluateAsync();
+        public void Evaluate();
     }
 }

@@ -1,17 +1,12 @@
-﻿using Hypnode.Core;
+using Hypnode.Core;
+using System.Collections;
 
 namespace Hypnode.Logic.Utils
 {
     public class ByteSplitterIn : INode
     {
         private Connection<byte>? inputPort = null;
-        private readonly Connection<LogicValue>[] outputPorts;
-
-        public ByteSplitterIn()
-        {
-            outputPorts = [];
-            outputPorts = new Connection<LogicValue>[8];
-        }
+        private readonly Connection<LogicValue>[] outputPorts = new Connection<LogicValue>[8];
 
         public INode SetPort(string portName, IConnection connection)
         {
@@ -28,16 +23,26 @@ namespace Hypnode.Logic.Utils
             return this;
         }
 
-        public async Task ExecuteAsync()
+        public IEnumerator Execute()
         {
             if (inputPort is null)
                 throw new InvalidOperationException("Input port is not set");
 
-            while (inputPort.TryReceive(out var packet))
+            while (true)
             {
+                if (inputPort.IsClosed && !inputPort.HasData)
+                    break;
+
+                if (!inputPort.HasData)
+                {
+                    yield return null;
+                    continue;
+                }
+
+                var packet = inputPort.Receive();
                 LogicValue[] values = [.. Enumerable.Range(0, 8)
-                        .Select(i => (packet & (1 << i)) != 0)
-                        .Select(b => b ? LogicValue.True : LogicValue.False)];
+                    .Select(i => (packet & (1 << i)) != 0)
+                    .Select(b => b ? LogicValue.True : LogicValue.False)];
 
                 for (int i = 0; i < 8; ++i)
                     outputPorts[i]?.Send(values[i]);

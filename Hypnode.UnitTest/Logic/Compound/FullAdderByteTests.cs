@@ -1,6 +1,6 @@
-﻿using Hypnode.Async;
 using Hypnode.Core;
 using Hypnode.Logic.Compound;
+using Hypnode.Runtime;
 using Hypnode.System.Common;
 
 namespace Hypnode.UnitTests.Logic.Compound
@@ -18,19 +18,15 @@ namespace Hypnode.UnitTests.Logic.Compound
         [TestCase(0b11111010, 0b00000101)]
         [TestCase(0b00000000, 0b11111111)]
         [TestCase(0b11111111, 0b00000000)]
-        public async Task TestAdderByteCompound_CorrectValues(byte a, byte b)
+        public void TestAdderByteCompound_CorrectValues(byte a, byte b)
         {
             var graph = new TGraph();
             var ain = graph.CreateConnection<byte>();
             var bin = graph.CreateConnection<byte>();
-
             var outsum = graph.CreateConnection<byte>();
 
-            graph.AddNode(new PulseValue<byte>(a))
-                .SetPort("OUT", ain);
-
-            graph.AddNode(new PulseValue<byte>(b))
-               .SetPort("OUT", bin);
+            graph.AddNode(new PulseValue<byte>(a)).SetPort("OUT", ain);
+            graph.AddNode(new PulseValue<byte>(b)).SetPort("OUT", bin);
 
             graph.AddNode(new FullAdderByte(new TGraph()))
                 .SetPort("INA", ain)
@@ -40,14 +36,14 @@ namespace Hypnode.UnitTests.Logic.Compound
             var sumCell = new Register<byte>();
             graph.AddNode(sumCell).SetPort("IN", outsum);
 
-            await graph.EvaluateAsync();
+            graph.Evaluate();
 
             Assert.That(sumCell.GetValue(), Is.EqualTo(a + b));
         }
     }
 
     [TestFixture]
-    public class AsyncNodeGrap_FullAdderByteTests : FullAdderByteTests<AsyncNodeGraph>
+    public class AsyncNodeGrap_FullAdderByteTests : FullAdderByteTests<CoroutineNodeGraph>
     {
 
     }

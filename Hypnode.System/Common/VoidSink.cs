@@ -1,42 +1,33 @@
-﻿using Hypnode.Core;
+using Hypnode.Core;
+using System.Collections;
 
 namespace Hypnode.System.Common
 {
     public class VoidSink<T> : INode
     {
-        private readonly List<Connection<T>> inputPorts;
-
-        public VoidSink()
-        {
-            inputPorts = [];
-        }
+        private readonly List<Connection<T>> inputPorts = [];
 
         public INode SetPort(string portName, IConnection connection)
         {
             if (connection is Connection<T> conn) inputPorts.Add(conn);
-
             return this;
         }
 
-        public async Task ExecuteAsync()
+        public IEnumerator Execute()
         {
-            if (inputPorts.Count == 0)
-                return;
-
-            var consumptionTasks = new List<Task>();
-
-            foreach (var connection in inputPorts)
-                consumptionTasks.Add(Task.Run(() => VoidSink<T>.ConsumeConnection(connection)));
-
-            await Task.WhenAll(consumptionTasks);
-        }
-
-        private static void ConsumeConnection(Connection<T> connection)
-        {
-            while (connection.TryReceive(out _))
+            bool anyReceived;
+            do
             {
+                anyReceived = false;
+                foreach (var conn in inputPorts)
+                {
+                    while (conn.TryReceive(out _))
+                        anyReceived = true;
+                }
 
+                if (anyReceived) yield return null;
             }
+            while (anyReceived);
         }
     }
 }

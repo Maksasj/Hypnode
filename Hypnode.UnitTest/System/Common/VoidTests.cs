@@ -1,5 +1,5 @@
-﻿using Hypnode.Async;
 using Hypnode.Core;
+using Hypnode.Runtime;
 using Hypnode.System.Common;
 using Moq;
 
@@ -8,24 +8,21 @@ namespace Hypnode.UnitTests.System.Common
     public abstract class VoidTests<TGraph> where TGraph : INodeGraph, new()
     {
         [Test]
-        public async Task TestVoid_SingleConnection()
+        public void TestVoid_SingleConnection()
         {
             var graph = new TGraph();
             var connection = graph.CreateConnection<byte>();
 
-            graph.AddNode(new PulseValue<byte>(1))
-                .SetPort("OUT", connection);
+            graph.AddNode(new PulseValue<byte>(1)).SetPort("OUT", connection);
+            graph.AddNode(new VoidSink<byte>()).SetPort("_", connection);
 
-            graph.AddNode(new VoidSink<byte>())
-                .SetPort("_", connection);
-
-            await graph.EvaluateAsync();
+            graph.Evaluate();
 
             Assert.Pass();
         }
 
         [Test]
-        public async Task TestVoid_SingleConnection_TryReceiveOnce()
+        public void TestVoid_SingleConnection_TryReceiveOnce()
         {
             var graph = new TGraph();
 
@@ -35,7 +32,7 @@ namespace Hypnode.UnitTests.System.Common
             var sink = graph.AddNode(new VoidSink<int>());
             sink.SetPort("_", connection.Object);
 
-            await graph.EvaluateAsync();
+            graph.Evaluate();
 
             connection.Verify(c => c.TryReceive(out It.Ref<int>.IsAny), Times.Once);
         }
@@ -44,7 +41,7 @@ namespace Hypnode.UnitTests.System.Common
         [TestCase(1)]
         [TestCase(3)]
         [TestCase(10)]
-        public async Task TestVoid_MultipleConnection_TryReceiveOnce(int connectionCount)
+        public void TestVoid_MultipleConnection_TryReceiveOnce(int connectionCount)
         {
             var graph = new TGraph();
 
@@ -60,37 +57,34 @@ namespace Hypnode.UnitTests.System.Common
                 sink.SetPort("_", connection.Object);
             }
 
-            await graph.EvaluateAsync();
+            graph.Evaluate();
 
             foreach (var mockConnection in connections)
                 mockConnection.Verify(c => c.TryReceive(out It.Ref<int>.IsAny), Times.Once());
         }
 
         [Test]
-        public async Task TestVoid_MultipleConnections()
+        public void TestVoid_MultipleConnections()
         {
             var graph = new TGraph();
             var connection1 = graph.CreateConnection<byte>();
             var connection2 = graph.CreateConnection<byte>();
 
-            graph.AddNode(new PulseValue<byte>(1))
-                .SetPort("OUT", connection1);
-
-            graph.AddNode(new PulseValue<byte>(1))
-                .SetPort("OUT", connection2);
+            graph.AddNode(new PulseValue<byte>(1)).SetPort("OUT", connection1);
+            graph.AddNode(new PulseValue<byte>(1)).SetPort("OUT", connection2);
 
             graph.AddNode(new VoidSink<byte>())
                 .SetPort("_", connection1)
                 .SetPort("_", connection2);
 
-            await graph.EvaluateAsync();
+            graph.Evaluate();
 
             Assert.Pass();
         }
     }
 
     [TestFixture]
-    public class AsyncNodeGraph_VoidTests : VoidTests<AsyncNodeGraph>
+    public class CoroutineNodeGraph_VoidTests : VoidTests<CoroutineNodeGraph>
     {
 
     }

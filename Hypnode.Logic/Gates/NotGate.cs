@@ -1,4 +1,5 @@
-﻿using Hypnode.Core;
+using Hypnode.Core;
+using System.Collections;
 
 namespace Hypnode.Logic.Gates
 {
@@ -15,15 +16,24 @@ namespace Hypnode.Logic.Gates
             return this;
         }
 
-        public async Task ExecuteAsync()
+        public IEnumerator Execute()
         {
             if (inputPort is null)
-                throw new InvalidOperationException("Input port A is not set");
+                throw new InvalidOperationException("Input port is not set");
 
-            while (inputPort.TryReceive(out var packet))
+            while (true)
             {
-                var result = (packet == LogicValue.True) ? LogicValue.False : LogicValue.True;
-                outputPort?.Send(result);
+                if (inputPort.IsClosed && !inputPort.HasData)
+                    break;
+
+                if (!inputPort.HasData)
+                {
+                    yield return null;
+                    continue;
+                }
+
+                var packet = inputPort.Receive();
+                outputPort?.Send(packet == LogicValue.True ? LogicValue.False : LogicValue.True);
             }
 
             outputPort?.Close();

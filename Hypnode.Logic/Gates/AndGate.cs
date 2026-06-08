@@ -1,4 +1,5 @@
-﻿using Hypnode.Core;
+using Hypnode.Core;
+using System.Collections;
 
 namespace Hypnode.Logic.Gates
 {
@@ -17,7 +18,7 @@ namespace Hypnode.Logic.Gates
             return this;
         }
 
-        public async Task ExecuteAsync()
+        public IEnumerator Execute()
         {
             if (inputPortA is null)
                 throw new InvalidOperationException("Input port A is not set");
@@ -25,9 +26,21 @@ namespace Hypnode.Logic.Gates
             if (inputPortB is null)
                 throw new InvalidOperationException("Input port B is not set");
 
-            while (inputPortA.TryReceive(out var packetA) && inputPortB.TryReceive(out var packetB))
+            while (true)
             {
-                var result = (packetA == LogicValue.True && packetB == LogicValue.True) ? LogicValue.True : LogicValue.False;
+                if ((inputPortA.IsClosed && !inputPortA.HasData) ||
+                    (inputPortB.IsClosed && !inputPortB.HasData))
+                    break;
+
+                if (!inputPortA.HasData || !inputPortB.HasData)
+                {
+                    yield return null;
+                    continue;
+                }
+
+                var a = inputPortA.Receive();
+                var b = inputPortB.Receive();
+                var result = (a == LogicValue.True && b == LogicValue.True) ? LogicValue.True : LogicValue.False;
                 outputPort?.Send(result);
             }
 

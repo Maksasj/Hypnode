@@ -1,5 +1,5 @@
-﻿using Hypnode.Async;
 using Hypnode.Core;
+using Hypnode.Runtime;
 using Hypnode.System.Common;
 using Hypnode.System.Math;
 
@@ -15,7 +15,7 @@ namespace Hypnode.UnitTests.System.Math
         [TestCase(4)]
         [TestCase(3)]
         [TestCase(-25)]
-        public async Task TestSquarer_CorrectValue(int value)
+        public void TestSquarer_CorrectValue(int value)
         {
             var graph = new TGraph();
 
@@ -26,14 +26,14 @@ namespace Hypnode.UnitTests.System.Math
             graph.AddConnection<int>(pulse, "OUT", squarer, "IN");
             graph.AddConnection<int>(squarer, "OUT", result, "IN");
 
-            await graph.EvaluateAsync();
+            graph.Evaluate();
 
             Assert.That(result.GetValue(), Is.EqualTo(value * value));
         }
     }
 
     [TestFixture]
-    public class AsyncNodeGraph_SquarerTests : SquarerTests<AsyncNodeGraph>
+    public class CoroutineNodeGraph_SquarerTests : SquarerTests<CoroutineNodeGraph>
     {
 
     }

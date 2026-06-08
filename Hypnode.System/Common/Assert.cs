@@ -1,4 +1,5 @@
-﻿using Hypnode.Core;
+using Hypnode.Core;
+using System.Collections;
 
 namespace Hypnode.System.IO
 {
@@ -12,15 +13,25 @@ namespace Hypnode.System.IO
             return this;
         }
 
-        public async Task ExecuteAsync()
+        public IEnumerator Execute()
         {
             if (inputPort is null)
                 throw new InvalidOperationException("Input port is not set");
 
-            var packet = inputPort.Receive();
+            while (true)
+            {
+                if (inputPort.IsClosed && !inputPort.HasData)
+                    break;
 
-            if (!packet)
-                throw new InvalidOperationException("Assertion failed");
+                if (!inputPort.HasData)
+                {
+                    yield return null;
+                    continue;
+                }
+
+                if (!inputPort.Receive())
+                    throw new InvalidOperationException("Assertion failed");
+            }
         }
     }
 }

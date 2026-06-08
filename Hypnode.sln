@@ -11,7 +11,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hypnode.Logic", "Hypnode.Lo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hypnode.System", "Hypnode.System\Hypnode.System.csproj", "{613F0340-6ADD-4445-BD12-5EE48FAF7F02}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hypnode.Async", "Hypnode.Async\Hypnode.Async.csproj", "{00337C4A-915C-4C43-9459-3A3785219A59}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hypnode.Runtime", "Hypnode.Runtime\Hypnode.Runtime.csproj", "{00337C4A-915C-4C43-9459-3A3785219A59}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hypnode.UnitTests", "Hypnode.UnitTest\Hypnode.UnitTests.csproj", "{8CF8C145-E7F5-4DAA-A270-A38172826965}"
 EndProject

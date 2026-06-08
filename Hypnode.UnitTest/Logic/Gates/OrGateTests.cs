@@ -1,7 +1,7 @@
-﻿using Hypnode.Async;
 using Hypnode.Core;
 using Hypnode.Logic;
 using Hypnode.Logic.Gates;
+using Hypnode.Runtime;
 using Hypnode.System.Common;
 
 namespace Hypnode.UnitTests.Logic.Gates
@@ -12,7 +12,7 @@ namespace Hypnode.UnitTests.Logic.Gates
         [TestCase(LogicValue.False, LogicValue.True, LogicValue.True)]
         [TestCase(LogicValue.True, LogicValue.False, LogicValue.True)]
         [TestCase(LogicValue.True, LogicValue.True, LogicValue.True)]
-        public async Task TestOr_CorrectValue(LogicValue a, LogicValue b, LogicValue expect)
+        public void TestOr_CorrectValue(LogicValue a, LogicValue b, LogicValue expect)
         {
             var graph = new TGraph();
             var connection1 = graph.CreateConnection<LogicValue>();
@@ -33,14 +33,14 @@ namespace Hypnode.UnitTests.Logic.Gates
             var result = new Register<LogicValue>();
             graph.AddNode(result).SetPort("IN", connection3);
 
-            await graph.EvaluateAsync();
+            graph.Evaluate();
 
             Assert.That(expect, Is.EqualTo(result.GetValue()));
         }
     }
 
     [TestFixture]
-    public class AsyncNodeGrap_OrGateTests : OrGateTests<AsyncNodeGraph>
+    public class AsyncNodeGrap_OrGateTests : OrGateTests<CoroutineNodeGraph>
     {
 
     }

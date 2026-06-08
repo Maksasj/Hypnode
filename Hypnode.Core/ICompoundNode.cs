@@ -1,4 +1,6 @@
-﻿namespace Hypnode.Core
+using System.Collections;
+
+namespace Hypnode.Core
 {
     public abstract class ICompoundNode : INode
     {
@@ -8,8 +10,9 @@
         {
             NodeGraph = nodeGraph;
         }
+
         public abstract INode SetPort(string portName, IConnection connection);
 
-        public abstract Task ExecuteAsync();
+        public abstract IEnumerator Execute();
     }
 }

@@ -1,16 +1,12 @@
-﻿using Hypnode.Core;
+using Hypnode.Core;
+using System.Collections;
 
 namespace Hypnode.Logic.Utils
 {
     public class ByteSplitterOut : INode
     {
-        private readonly Connection<LogicValue>[] inputPorts;
+        private readonly Connection<LogicValue>[] inputPorts = new Connection<LogicValue>[8];
         private Connection<byte>? outputPort = null;
-
-        public ByteSplitterOut()
-        {
-            inputPorts = new Connection<LogicValue>[8];
-        }
 
         public INode SetPort(string portName, IConnection connection)
         {
@@ -22,47 +18,45 @@ namespace Hypnode.Logic.Utils
             if (portName == "5" && connection is Connection<LogicValue> conn5) inputPorts[5] = conn5;
             if (portName == "6" && connection is Connection<LogicValue> conn6) inputPorts[6] = conn6;
             if (portName == "7" && connection is Connection<LogicValue> conn7) inputPorts[7] = conn7;
-            if (portName == "OUT" && connection is Connection<byte> conn8) outputPort = conn8;
+            if (portName == "OUT" && connection is Connection<byte> connOut) outputPort = connOut;
 
             return this;
         }
 
-        public async Task ExecuteAsync()
+        public IEnumerator Execute()
         {
-            bool allReceived;
-            LogicValue[] receivedValues = new LogicValue[8];
-
-            do
+            for (int i = 0; i < 8; i++)
             {
-                allReceived = true;
+                if (inputPorts[i] is null)
+                    throw new InvalidOperationException($"Input port {i} is not set");
+            }
 
+            while (true)
+            {
+                bool anyExhausted = Enumerable.Range(0, 8).Any(i =>
+                    inputPorts[i].IsClosed && !inputPorts[i].HasData);
+
+                if (anyExhausted)
+                    break;
+
+                bool allReady = Enumerable.Range(0, 8).All(i => inputPorts[i].HasData);
+
+                if (!allReady)
+                {
+                    yield return null;
+                    continue;
+                }
+
+                var values = new LogicValue[8];
                 for (int i = 0; i < 8; i++)
-                {
-                    if (inputPorts[i] is null)
-                    {
-                        throw new InvalidOperationException($"Input port {i} is not set");
-                    }
+                    values[i] = inputPorts[i].Receive();
 
-                    if (inputPorts[i]!.TryReceive(out var value))
-                    {
-                        receivedValues[i] = value;
-                    }
-                    else
-                    {
-                        allReceived = false;
-                        break;
-                    }
-                }
+                byte result = (byte)Enumerable.Range(0, 8)
+                    .Select(i => values[i] == LogicValue.True ? (1 << i) : 0)
+                    .Aggregate(0, (acc, bit) => acc | bit);
 
-                if (allReceived)
-                {
-                    byte outputByte = (byte)Enumerable.Range(0, 8)
-                        .Select(i => (receivedValues[i] == LogicValue.True) ? (1 << i) : 0)
-                        .Aggregate(0, (current, bitValue) => current | bitValue);
-
-                    outputPort?.Send(outputByte);
-                }
-            } while (allReceived);
+                outputPort?.Send(result);
+            }
 
             outputPort?.Close();
         }

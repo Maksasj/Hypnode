@@ -1,10 +1,12 @@
-﻿namespace Hypnode.Core
+using System.Collections;
+
+namespace Hypnode.Core
 {
     public interface INode
     {
         public INode SetPort(string portName, IConnection connection);
 
-        Task ExecuteAsync();
+        IEnumerator Execute();
     }
 
     public static class NodeExtensions

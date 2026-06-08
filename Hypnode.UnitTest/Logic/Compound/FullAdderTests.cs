@@ -1,7 +1,7 @@
-﻿using Hypnode.Async;
 using Hypnode.Core;
 using Hypnode.Logic;
 using Hypnode.Logic.Compound;
+using Hypnode.Runtime;
 using Hypnode.System.Common;
 
 namespace Hypnode.UnitTests.Logic.Compound
@@ -16,26 +16,20 @@ namespace Hypnode.UnitTests.Logic.Compound
         [TestCase(LogicValue.True, LogicValue.False, LogicValue.True, LogicValue.False, LogicValue.True)]
         [TestCase(LogicValue.True, LogicValue.True, LogicValue.False, LogicValue.False, LogicValue.True)]
         [TestCase(LogicValue.True, LogicValue.True, LogicValue.True, LogicValue.True, LogicValue.True)]
-        public async Task TestAdderCompound_CorrectValues(LogicValue a, LogicValue b, LogicValue cIn, LogicValue sum, LogicValue cOut)
+        public void TestAdderCompound_CorrectValues(LogicValue a, LogicValue b, LogicValue cIn, LogicValue sum, LogicValue cOut)
         {
             var graph = new TGraph();
             var ain = graph.CreateConnection<LogicValue>();
             var bin = graph.CreateConnection<LogicValue>();
             var cin = graph.CreateConnection<LogicValue>();
-
             var outsum = graph.CreateConnection<LogicValue>();
             var outc = graph.CreateConnection<LogicValue>();
 
-            graph.AddNode(new PulseValue<LogicValue>(a))
-                .SetPort("OUT", ain);
+            graph.AddNode(new PulseValue<LogicValue>(a)).SetPort("OUT", ain);
+            graph.AddNode(new PulseValue<LogicValue>(b)).SetPort("OUT", bin);
+            graph.AddNode(new PulseValue<LogicValue>(cIn)).SetPort("OUT", cin);
 
-            graph.AddNode(new PulseValue<LogicValue>(b))
-                .SetPort("OUT", bin);
-
-            graph.AddNode(new PulseValue<LogicValue>(cIn))
-                .SetPort("OUT", cin);
-
-            graph.AddNode(new FullAdder(new AsyncNodeGraph()))
+            graph.AddNode(new FullAdder(new CoroutineNodeGraph()))
                 .SetPort("INA", ain)
                 .SetPort("INB", bin)
                 .SetPort("INC", cin)
@@ -48,10 +42,13 @@ namespace Hypnode.UnitTests.Logic.Compound
             var carryCell = new Register<LogicValue>();
             graph.AddNode(carryCell).SetPort("IN", outc);
 
-            await graph.EvaluateAsync();
+            graph.Evaluate();
 
-            Assert.That(sumCell.GetValue(), Is.EqualTo(sum));
-            Assert.That(carryCell.GetValue(), Is.EqualTo(cOut));
+            Assert.Multiple(() =>
+            {
+                Assert.That(sumCell.GetValue(), Is.EqualTo(sum));
+                Assert.That(carryCell.GetValue(), Is.EqualTo(cOut));
+            });
         }
 
         [TestCase(0b00000000, 0b00000000)]
@@ -65,19 +62,15 @@ namespace Hypnode.UnitTests.Logic.Compound
         [TestCase(0b11111010, 0b00000101)]
         [TestCase(0b00000000, 0b11111111)]
         [TestCase(0b11111111, 0b00000000)]
-        public async Task TestAdderByteCompound_CorrectValues(byte a, byte b)
+        public void TestAdderByteCompound_CorrectValues(byte a, byte b)
         {
             var graph = new TGraph();
             var ain = graph.CreateConnection<byte>();
             var bin = graph.CreateConnection<byte>();
-
             var outsum = graph.CreateConnection<byte>();
 
-            graph.AddNode(new PulseValue<byte>(a))
-                .SetPort("OUT", ain);
-
-            graph.AddNode(new PulseValue<byte>(b))
-               .SetPort("OUT", bin);
+            graph.AddNode(new PulseValue<byte>(a)).SetPort("OUT", ain);
+            graph.AddNode(new PulseValue<byte>(b)).SetPort("OUT", bin);
 
             graph.AddNode(new FullAdderByte(new TGraph()))
                 .SetPort("INA", ain)
@@ -87,14 +80,14 @@ namespace Hypnode.UnitTests.Logic.Compound
             var sumCell = new Register<byte>();
             graph.AddNode(sumCell).SetPort("IN", outsum);
 
-            await graph.EvaluateAsync();
+            graph.Evaluate();
 
             Assert.That(sumCell.GetValue(), Is.EqualTo(a + b));
         }
     }
 
     [TestFixture]
-    public class AsyncNodeGrap_FullAdderTests : FullAdderTests<AsyncNodeGraph>
+    public class AsyncNodeGrap_FullAdderTests : FullAdderTests<CoroutineNodeGraph>
     {
 
     }

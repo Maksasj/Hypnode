@@ -1,6 +1,6 @@
-﻿using Hypnode.Async;
 using Hypnode.Logic;
 using Hypnode.Logic.Gates;
+using Hypnode.Runtime;
 using Hypnode.System.Common;
 using Hypnode.System.IO;
 using Hypnode.System.Math;
@@ -9,9 +9,9 @@ namespace Hypnode.Example
 {
     class Program
     {
-        private static async Task TestCircuit()
+        private static void TestCircuit()
         {
-            var graph = new AsyncNodeGraph();
+            var graph = new CoroutineNodeGraph();
             var conn1 = graph.CreateConnection<int>();
             var conn2 = graph.CreateConnection<int>();
 
@@ -25,12 +25,12 @@ namespace Hypnode.Example
             graph.AddNode(new Printer<int>())
                 .SetPort("IN", conn2);
 
-            await graph.EvaluateAsync();
+            graph.Evaluate();
         }
 
-        private static async Task Adder()
+        private static void Adder()
         {
-            var graph = new AsyncNodeGraph();
+            var graph = new CoroutineNodeGraph();
             var AtoDemux1 = graph.CreateConnection<LogicValue>();
             var Demux1toXor1 = graph.CreateConnection<LogicValue>();
             var BtoDemux2 = graph.CreateConnection<LogicValue>();
@@ -45,103 +45,44 @@ namespace Hypnode.Example
             var Demux2toAnd2 = graph.CreateConnection<LogicValue>();
             var And1toOr = graph.CreateConnection<LogicValue>();
             var And2toOr = graph.CreateConnection<LogicValue>();
-
             var toCarryOut = graph.CreateConnection<LogicValue>();
             var toSum = graph.CreateConnection<LogicValue>();
 
-            // A
-            graph.AddNode(new PulseValue<LogicValue>(LogicValue.True))
-                .SetPort("OUT", AtoDemux1);
+            graph.AddNode(new PulseValue<LogicValue>(LogicValue.True)).SetPort("OUT", AtoDemux1);
+            graph.AddNode(new Splitter<LogicValue>()).SetPort("IN", AtoDemux1).SetPort("OUT", Demux1toXor1).SetPort("OUT", Demux1toAnd2);
+            graph.AddNode(new PulseValue<LogicValue>(LogicValue.True)).SetPort("OUT", BtoDemux2);
+            graph.AddNode(new Splitter<LogicValue>()).SetPort("IN", BtoDemux2).SetPort("OUT", Demux2toXor1).SetPort("OUT", Demux2toAnd2);
+            graph.AddNode(new PulseValue<LogicValue>(LogicValue.True)).SetPort("OUT", CtoDemux3);
+            graph.AddNode(new Splitter<LogicValue>()).SetPort("IN", CtoDemux3).SetPort("OUT", Demux3toXor2).SetPort("OUT", Demux3toAnd1);
+            graph.AddNode(new XorGate()).SetPort("INA", Demux1toXor1).SetPort("INB", Demux2toXor1).SetPort("OUT", Xor1toDemux4);
+            graph.AddNode(new XorGate()).SetPort("INA", Demux3toXor2).SetPort("INB", Demux4toXor2).SetPort("OUT", toSum);
 
-            // Demux1
-            graph.AddNode(new Splitter<LogicValue>())
-                .SetPort("IN", AtoDemux1)
-                .SetPort("OUT", Demux1toXor1)
-                .SetPort("OUT", Demux1toAnd2);
+            var sumCell = graph.AddNode(new Register<LogicValue>()).SetPort("IN", toSum);
 
-            // B
-            graph.AddNode(new PulseValue<LogicValue>(LogicValue.True))
-                .SetPort("OUT", BtoDemux2);
+            graph.AddNode(new Splitter<LogicValue>()).SetPort("IN", Xor1toDemux4).SetPort("OUT", Demux4toXor2).SetPort("OUT", Demux4toAnd1);
+            graph.AddNode(new AndGate()).SetPort("INA", Demux4toAnd1).SetPort("INB", Demux3toAnd1).SetPort("OUT", And1toOr);
+            graph.AddNode(new AndGate()).SetPort("INA", Demux1toAnd2).SetPort("INB", Demux2toAnd2).SetPort("OUT", And2toOr);
+            graph.AddNode(new OrGate()).SetPort("INA", And2toOr).SetPort("INB", And1toOr).SetPort("OUT", toCarryOut);
 
-            // Demux2
-            graph.AddNode(new Splitter<LogicValue>())
-                .SetPort("IN", BtoDemux2)
-                .SetPort("OUT", Demux2toXor1)
-                .SetPort("OUT", Demux2toAnd2);
+            graph.AddNode(new Printer<LogicValue>()).SetPort("IN", toCarryOut);
 
-            // C
-            graph.AddNode(new PulseValue<LogicValue>(LogicValue.True))
-                .SetPort("OUT", CtoDemux3);
-
-            // Demux3
-            graph.AddNode(new Splitter<LogicValue>())
-                .SetPort("IN", CtoDemux3)
-                .SetPort("OUT", Demux3toXor2)
-                .SetPort("OUT", Demux3toAnd1);
-
-            // Xor1
-            graph.AddNode(new XorGate())
-                .SetPort("INA", Demux1toXor1)
-                .SetPort("INB", Demux2toXor1)
-                .SetPort("OUT", Xor1toDemux4);
-
-            // Xor2
-            graph.AddNode(new XorGate())
-                .SetPort("INA", Demux3toXor2)
-                .SetPort("INB", Demux4toXor2)
-                .SetPort("OUT", toSum);
-
-            var sumCell = graph.AddNode(new Register<LogicValue>())
-                .SetPort("IN", toSum);
-
-            // Demux4
-            graph.AddNode(new Splitter<LogicValue>())
-                .SetPort("IN", Xor1toDemux4)
-                .SetPort("OUT", Demux4toXor2)
-                .SetPort("OUT", Demux4toAnd1);
-
-            // And1
-            graph.AddNode(new AndGate())
-                .SetPort("INA", Demux4toAnd1)
-                .SetPort("INB", Demux3toAnd1)
-                .SetPort("OUT", And1toOr);
-
-            // And2
-            graph.AddNode(new AndGate())
-                .SetPort("INB", Demux2toAnd2)
-                .SetPort("INA", Demux1toAnd2)
-                .SetPort("OUT", And2toOr);
-
-            // Or
-            graph.AddNode(new OrGate())
-                .SetPort("INB", And1toOr)
-                .SetPort("INA", And2toOr)
-                .SetPort("OUT", toCarryOut); // OUT
-
-            // Printer
-            graph.AddNode(new Printer<LogicValue>())
-                .SetPort("IN", toCarryOut);
-
-            await graph.EvaluateAsync();
+            graph.Evaluate();
         }
 
-        private static async Task TestSome()
+        private static void TestSome()
         {
-            var graph = new AsyncNodeGraph();
+            var graph = new CoroutineNodeGraph();
             var connection = graph.CreateConnection<LogicValue>();
 
-            graph.AddNode(new PulseValue<LogicValue>(LogicValue.False))
-                .SetPort("OUT", connection);
+            graph.AddNode(new PulseValue<LogicValue>(LogicValue.False)).SetPort("OUT", connection);
+            graph.AddNode(new Register<LogicValue>()).SetPort("IN", connection);
 
-            var result = graph.AddNode(new Register<LogicValue>())
-                .SetPort("IN", connection);
-
-            await graph.EvaluateAsync();
+            graph.Evaluate();
         }
 
-        public static async Task Main()
+        public static void Main()
         {
-            await Adder();
+            Adder();
         }
     }
 }

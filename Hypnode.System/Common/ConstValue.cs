@@ -1,4 +1,5 @@
-﻿using Hypnode.Core;
+using Hypnode.Core;
+using System.Collections;
 
 namespace Hypnode.System.Common
 {
@@ -9,7 +10,7 @@ namespace Hypnode.System.Common
 
         public ConstValue(T value)
         {
-            this.Value = value;
+            Value = value;
         }
 
         public INode SetPort(string portName, IConnection connection)
@@ -18,10 +19,13 @@ namespace Hypnode.System.Common
             return this;
         }
 
-        public async Task ExecuteAsync()
+        public IEnumerator Execute()
         {
             while (true)
+            {
                 outputPort?.Send(Value);
+                yield return null;
+            }
         }
     }
 }

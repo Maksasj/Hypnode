@@ -1,4 +1,5 @@
-﻿using Hypnode.Core;
+using Hypnode.Core;
+using System.Collections;
 
 namespace Hypnode.System.Math
 {
@@ -8,17 +9,18 @@ namespace Hypnode.System.Math
 
         public INode SetPort(string portName, IConnection connection)
         {
-            if (portName == "OUT" && connection is Connection<int> con1) outputPort = con1;
-
+            if (portName == "OUT" && connection is Connection<int> con) outputPort = con;
             return this;
         }
 
-        public async Task ExecuteAsync()
+        public IEnumerator Execute()
         {
             var i = 0;
-
             while (true)
+            {
                 outputPort?.Send(i++);
+                yield return null;
+            }
         }
     }
 }
