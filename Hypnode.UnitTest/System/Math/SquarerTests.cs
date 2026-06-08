@@ -23,8 +23,8 @@ public abstract class SquarerTests<TGraph> where TGraph : INodeGraph, new()
         var squarer = graph.AddNode(new Squarer());
         var result = graph.AddNode(new Register<int>());
 
-        graph.AddConnection<int>(pulse, "OUT", squarer, "IN");
-        graph.AddConnection<int>(squarer, "OUT", result, "IN");
+        graph.AddConnection<int>(pulse, Ports.Output, squarer, Ports.Input);
+        graph.AddConnection<int>(squarer, Ports.Output, result, Ports.Input);
 
         graph.Evaluate();
 

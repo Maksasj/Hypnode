@@ -5,6 +5,10 @@ namespace Hypnode.Logic.Gates;
 
 public class XorGate : INode
 {
+    public const string InputA = "INA";
+    public const string InputB = "INB";
+    public const string Output = "OUT";
+
     private Connection<LogicValue>? _inputPortA = null;
     private Connection<LogicValue>? _inputPortB = null;
     private Connection<LogicValue>? _outputPort = null;
@@ -13,9 +17,9 @@ public class XorGate : INode
     {
         var result = portName switch
         {
-            "INA" => NodeExtensions.TryAttach(ref _inputPortA, connection),
-            "INB" => NodeExtensions.TryAttach(ref _inputPortB, connection),
-            "OUT" => NodeExtensions.TryAttach(ref _outputPort, connection),
+            InputA => NodeExtensions.TryAttach(ref _inputPortA, connection),
+            InputB => NodeExtensions.TryAttach(ref _inputPortB, connection),
+            Output => NodeExtensions.TryAttach(ref _outputPort, connection),
             _ => throw new InvalidOperationException($"Port {portName} is invalid"),
         };
 
@@ -27,23 +31,14 @@ public class XorGate : INode
 
     public IEnumerator Execute()
     {
-        if (_inputPortA is null)
-            throw new InvalidOperationException("Input port A is not set");
-
-        if (_inputPortB is null)
-            throw new InvalidOperationException("Input port B is not set");
+        if (_inputPortA is null) throw new InvalidOperationException("Input port A is not set");
+        if (_inputPortB is null) throw new InvalidOperationException("Input port B is not set");
 
         while (true)
         {
-            if ((_inputPortA.IsClosed && !_inputPortA.HasData) ||
-                (_inputPortB.IsClosed && !_inputPortB.HasData))
+            if ((_inputPortA.IsClosed && !_inputPortA.HasData) || (_inputPortB.IsClosed && !_inputPortB.HasData))
                 break;
-
-            if (!_inputPortA.HasData || !_inputPortB.HasData)
-            {
-                yield return null;
-                continue;
-            }
+            if (!_inputPortA.HasData || !_inputPortB.HasData) { yield return null; continue; }
 
             var a = _inputPortA.Receive();
             var b = _inputPortB.Receive();

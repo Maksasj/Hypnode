@@ -3,6 +3,7 @@ using Hypnode.Logic;
 using Hypnode.Runtime;
 using Hypnode.System.Common;
 using Moq;
+using Hypnode.System.Math;
 
 namespace Hypnode.UnitTests.System.Common;
 
@@ -17,7 +18,7 @@ public abstract class MultiPulseTests<TGraph> where TGraph : INodeGraph, new()
         var multiPulse = graph.AddNode(new MultiPulseValue<LogicValue>([value]));
         var result = graph.AddNode(new Register<LogicValue>());
 
-        graph.AddConnection<LogicValue>(multiPulse, "OUT", result, "IN");
+        graph.AddConnection<LogicValue>(multiPulse, Ports.Output, result, Ports.Input);
 
         graph.Evaluate();
 
@@ -35,7 +36,7 @@ public abstract class MultiPulseTests<TGraph> where TGraph : INodeGraph, new()
         var connection = new Mock<Connection<int>>();
         var multiPulse = graph.AddNode(new MultiPulseValue<int>([value]));
 
-        multiPulse.SetPort("OUT", connection.Object);
+        multiPulse.SetPort(Ports.Output, connection.Object);
 
         graph.Evaluate();
 

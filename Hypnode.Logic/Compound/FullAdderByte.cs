@@ -8,38 +8,32 @@ namespace Hypnode.Logic.Compound;
 
 public class FullAdderByte(INodeGraph nodeGraph) : CompoundNode(nodeGraph)
 {
+    public const string InputA = "INA";
+    public const string InputB = "INB";
+    public const string OutputSum = "OUTSUM";
+
     private Connection<byte>? _aPort = null;
     private Connection<byte>? _bPort = null;
     private Connection<byte>? _sum = null;
 
     public override INode SetPort(string portName, IConnection connection)
     {
-        if (portName == "INA" && connection is Connection<byte> conn0) _aPort = conn0;
-        if (portName == "INB" && connection is Connection<byte> conn1) _bPort = conn1;
-        if (portName == "OUTSUM" && connection is Connection<byte> conn2) _sum = conn2;
-
+        if (portName == InputA && connection is Connection<byte> conn0) _aPort = conn0;
+        if (portName == InputB && connection is Connection<byte> conn1) _bPort = conn1;
+        if (portName == OutputSum && connection is Connection<byte> conn2) _sum = conn2;
         return this;
     }
 
     public override IEnumerator Execute()
     {
-        if (_aPort is null)
-            throw new InvalidOperationException("Input port A is not set");
-
-        if (_bPort is null)
-            throw new InvalidOperationException("Input port B is not set");
+        if (_aPort is null) throw new InvalidOperationException("Input port A is not set");
+        if (_bPort is null) throw new InvalidOperationException("Input port B is not set");
 
         while (true)
         {
-            if ((_aPort.IsClosed && !_aPort.HasData) ||
-                (_bPort.IsClosed && !_bPort.HasData))
+            if ((_aPort.IsClosed && !_aPort.HasData) || (_bPort.IsClosed && !_bPort.HasData))
                 break;
-
-            if (!_aPort.HasData || !_bPort.HasData)
-            {
-                yield return null;
-                continue;
-            }
+            if (!_aPort.HasData || !_bPort.HasData) { yield return null; continue; }
 
             var a = _aPort.Receive();
             var b = _bPort.Receive();
@@ -49,12 +43,12 @@ public class FullAdderByte(INodeGraph nodeGraph) : CompoundNode(nodeGraph)
             var bIn = graph.CreateConnection<byte>();
             var cIn = graph.CreateConnection<LogicValue>();
 
-            graph.AddNode(new PulseValue<byte>(a)).SetPort("OUT", aIn);
-            graph.AddNode(new PulseValue<byte>(b)).SetPort("OUT", bIn);
-            graph.AddNode(new PulseValue<LogicValue>(LogicValue.False)).SetPort("OUT", cIn);
+            graph.AddNode(new PulseValue<byte>(a)).SetPort(PulseValue<byte>.Output, aIn);
+            graph.AddNode(new PulseValue<byte>(b)).SetPort(PulseValue<byte>.Output, bIn);
+            graph.AddNode(new PulseValue<LogicValue>(LogicValue.False)).SetPort(PulseValue<LogicValue>.Output, cIn);
 
-            var aDemux = graph.AddNode(new ByteSplitterIn()).SetPort("IN", aIn);
-            var bDemux = graph.AddNode(new ByteSplitterIn()).SetPort("IN", bIn);
+            var aDemux = graph.AddNode(new ByteSplitterIn()).SetPort(ByteSplitterIn.Input, aIn);
+            var bDemux = graph.AddNode(new ByteSplitterIn()).SetPort(ByteSplitterIn.Input, bIn);
 
             Connection<LogicValue>? carry = null;
             var sumWires = new Connection<LogicValue>[8];
@@ -62,23 +56,22 @@ public class FullAdderByte(INodeGraph nodeGraph) : CompoundNode(nodeGraph)
             for (int i = 0; i < 8; ++i)
             {
                 var adder = graph.AddNode(new FullAdder(new CoroutineNodeGraph()));
-
                 var aWire = graph.CreateConnection<LogicValue>();
                 var bWire = graph.CreateConnection<LogicValue>();
 
                 aDemux.SetPort(i.ToString(), aWire);
                 bDemux.SetPort(i.ToString(), bWire);
 
-                adder.SetPort("INA", aWire);
-                adder.SetPort("INB", bWire);
-                adder.SetPort("INC", i == 0 ? cIn : carry!);
+                adder.SetPort(FullAdder.InputA, aWire);
+                adder.SetPort(FullAdder.InputB, bWire);
+                adder.SetPort(FullAdder.InputC, i == 0 ? cIn : carry!);
 
                 carry = graph.CreateConnection<LogicValue>();
                 var sumWire = graph.CreateConnection<LogicValue>();
                 sumWires[i] = sumWire;
 
-                adder.SetPort("OUTSUM", sumWire);
-                adder.SetPort("OUTC", carry);
+                adder.SetPort(FullAdder.OutputSum, sumWire);
+                adder.SetPort(FullAdder.OutputCarry, carry);
             }
 
             var sumMux = graph.AddNode(new ByteSplitterOut());
@@ -87,12 +80,12 @@ public class FullAdderByte(INodeGraph nodeGraph) : CompoundNode(nodeGraph)
             for (int i = 0; i < 8; ++i)
                 sumMux.SetPort(i.ToString(), sumWires[i]);
 
-            sumMux.SetPort("OUT", resultWire);
+            sumMux.SetPort(ByteSplitterOut.Output, resultWire);
 
             var result = new Register<byte>();
-            graph.AddNode(result).SetPort("IN", resultWire);
+            graph.AddNode(result).SetPort(Register<byte>.Input, resultWire);
 
-            graph.AddNode(new VoidSink<LogicValue>()).SetPort("_", carry!);
+            graph.AddNode(new VoidSink<LogicValue>()).SetPort(VoidSink<LogicValue>.Input, carry!);
 
             yield return graph;
 
