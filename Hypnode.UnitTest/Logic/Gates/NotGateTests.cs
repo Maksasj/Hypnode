@@ -3,7 +3,6 @@ using Hypnode.Logic;
 using Hypnode.Logic.Gates;
 using Hypnode.Runtime;
 using Hypnode.System.Common;
-using Hypnode.System.Math;
 
 namespace Hypnode.UnitTests.Logic.Gates;
 

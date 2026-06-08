@@ -1,8 +1,8 @@
 using Hypnode.Core;
+using Hypnode.Logic;
 using Hypnode.Runtime;
 using Hypnode.System.Common;
 using Moq;
-using Hypnode.System.Math;
 
 namespace Hypnode.UnitTests.System.Common;
 

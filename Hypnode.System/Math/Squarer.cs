@@ -26,7 +26,8 @@ public class Squarer : INode
         {
             if (_inputPort.IsClosed && !_inputPort.HasData) break;
             if (!_inputPort.HasData) { yield return null; continue; }
-            _outputPort?.Send(_inputPort.Receive() * _inputPort.Receive());
+            var packet = _inputPort.Receive();
+            _outputPort?.Send(packet * packet);
         }
 
         _outputPort?.Close();

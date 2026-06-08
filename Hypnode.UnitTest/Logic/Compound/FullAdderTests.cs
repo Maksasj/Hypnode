@@ -1,10 +1,9 @@
 using Hypnode.Core;
 using Hypnode.Logic;
 using Hypnode.Logic.Compound;
+using Hypnode.Logic.Gates;
 using Hypnode.Runtime;
 using Hypnode.System.Common;
-using Hypnode.Logic.Gates;
-using Hypnode.System.Math;
 
 namespace Hypnode.UnitTests.Logic.Compound;
 
