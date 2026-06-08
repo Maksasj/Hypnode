@@ -15,6 +15,13 @@ public class CoroutineNodeGraph : INodeGraph
         return connection;
     }
 
+    public Connection<T> CreateBoundedConnection<T>(int capacity)
+    {
+        var connection = new BoundedQueueConnection<T>(capacity);
+        Connections.Add(connection);
+        return connection;
+    }
+
     public T AddNode<T>(T node) where T : INode
     {
         Nodes.Add(node);
