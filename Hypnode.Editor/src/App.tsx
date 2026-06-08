@@ -19,7 +19,6 @@ import type { HypnodeNodeData } from './types/hypnode';
 import { HypnodeNode } from './components/HypnodeNode';
 import { NodePalette } from './components/NodePalette';
 import { Toolbar } from './components/Toolbar';
-import './App.css';
 
 const RF_NODE_TYPES = { hypnodeNode: HypnodeNode };
 
@@ -78,16 +77,16 @@ export default function App() {
   }
 
   return (
-    <div className="app">
+    <div className="flex flex-col h-screen overflow-hidden">
       <Toolbar
         nodes={nodes}
         edges={edges}
         onImport={handleImport}
         onClear={() => { setNodes([]); setEdges([]); }}
       />
-      <div className="app__workspace">
+      <div className="flex flex-1 overflow-hidden">
         <NodePalette />
-        <div className="app__canvas" ref={canvasRef} onDrop={onDrop} onDragOver={onDragOver}>
+        <div className="flex-1 relative" ref={canvasRef} onDrop={onDrop} onDragOver={onDragOver}>
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -109,3 +108,4 @@ export default function App() {
     </div>
   );
 }
+
