@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "Hypnode.Runtime": {
+      "commandName": "Project",
+      "commandLineArgs": "counter.xml",
+      "workingDirectory": "$(SolutionDir)Samples"
+    }
+  }
+}
