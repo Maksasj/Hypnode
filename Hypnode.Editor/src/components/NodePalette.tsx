@@ -7,25 +7,25 @@ export function NodePalette() {
   }
 
   return (
-    <aside className="w-56 shrink-0 bg-card border-r border-border flex flex-col overflow-hidden">
+    <aside className="w-56 shrink-0 bg-white border-r border-zinc-200 flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="px-4 py-3 border-b border-border">
-        <p className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground">
-          Nodes
+      <div className="px-4 py-3 border-b border-zinc-100">
+        <p className="text-[11px] font-semibold uppercase tracking-widest text-zinc-400">
+          Node Library
         </p>
       </div>
 
-      {/* Node list */}
-      <div className="flex-1 overflow-y-auto py-2 scrollbar-thin">
+      {/* Scrollable list */}
+      <div className="flex-1 overflow-y-auto py-2">
         {CATEGORIES.map(cat => (
-          <div key={cat} className="mb-1">
-            {/* Category label */}
-            <div className="flex items-center gap-2 px-4 py-1.5">
-              <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background: CATEGORY_COLORS[cat] }} />
-              <span
-                className="text-[10px] font-semibold uppercase tracking-widest"
-                style={{ color: CATEGORY_COLORS[cat] }}
-              >
+          <div key={cat} className="mb-3">
+            {/* Namespace header */}
+            <div className="flex items-center gap-2 px-4 py-1 mb-0.5">
+              <div
+                className="w-1.5 h-1.5 rounded-full shrink-0"
+                style={{ background: CATEGORY_COLORS[cat] ?? '#a1a1aa' }}
+              />
+              <span className="text-[10px] font-semibold text-zinc-400 tracking-wider uppercase">
                 {cat}
               </span>
             </div>
@@ -36,10 +36,11 @@ export function NodePalette() {
               .map(([typeName, def]) => (
                 <div
                   key={typeName}
-                  className="mx-2 px-3 py-1.5 rounded-md text-[12px] text-muted-foreground
-                             cursor-grab select-none flex items-center gap-2
-                             hover:bg-muted hover:text-foreground transition-colors duration-150
-                             active:cursor-grabbing active:opacity-80"
+                  className="mx-2 px-3 py-1.5 rounded-md text-[12px] text-zinc-600
+                             cursor-grab select-none
+                             hover:bg-zinc-50 hover:text-zinc-900
+                             transition-colors duration-100
+                             active:cursor-grabbing active:opacity-60"
                   draggable
                   onDragStart={e => onDragStart(e, typeName)}
                 >

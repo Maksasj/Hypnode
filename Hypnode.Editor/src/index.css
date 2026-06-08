@@ -2,50 +2,49 @@
 
 /* ─── Design Tokens ─────────────────────────────────────────── */
 @theme {
-  /* Neutral base (zinc scale) */
-  --color-background:       #09090b;
-  --color-foreground:       #fafafa;
-  --color-card:             #111113;
-  --color-card-foreground:  #fafafa;
-  --color-muted:            #1c1c1f;
+  /* Light base (zinc) */
+  --color-background:       #fafafa;
+  --color-foreground:       #09090b;
+  --color-card:             #ffffff;
+  --color-card-foreground:  #09090b;
+  --color-muted:            #f4f4f5;
   --color-muted-foreground: #71717a;
-  --color-border:           #27272a;
-  --color-input:            #27272a;
+  --color-border:           #e4e4e7;
+  --color-input:            #e4e4e7;
 
-  /* Accent — single purposeful color */
-  --color-primary:             #6366f1;
+  /* Primary */
+  --color-primary:             #18181b;
   --color-primary-foreground:  #fafafa;
-  --color-secondary:           #1c1c1f;
-  --color-secondary-foreground:#a1a1aa;
+  --color-secondary:           #f4f4f5;
+  --color-secondary-foreground:#18181b;
   --color-destructive:         #ef4444;
   --color-destructive-foreground: #fafafa;
-  --color-ring:                #6366f1;
+  --color-ring:                #18181b;
 
   /* Port / data-type palette */
-  --color-port-int:        #60a5fa;
-  --color-port-bool:       #34d399;
-  --color-port-byte:       #fbbf24;
-  --color-port-string:     #a78bfa;
-  --color-port-float:      #fb923c;
-  --color-port-double:     #f87171;
-  --color-port-logicvalue: #e879f9;
+  --color-port-int:        #3b82f6;
+  --color-port-bool:       #10b981;
+  --color-port-byte:       #f59e0b;
+  --color-port-string:     #8b5cf6;
+  --color-port-float:      #f97316;
+  --color-port-double:     #ef4444;
+  --color-port-logicvalue: #ec4899;
 
-  /* Category accent palette */
-  --color-cat-sources:   #3b82f6;
-  --color-cat-sinks:     #71717a;
-  --color-cat-routing:   #8b5cf6;
-  --color-cat-transform: #10b981;
-  --color-cat-logic:     #f59e0b;
-  --color-cat-compound:  #ef4444;
+  /* Namespace accent dots — muted */
+  --color-ns-common:   #6366f1;
+  --color-ns-io:       #06b6d4;
+  --color-ns-math:     #10b981;
+  --color-ns-gates:    #f59e0b;
+  --color-ns-compound: #ef4444;
 
   /* Typography */
-  --font-sans: 'Inter', 'Geist Sans', ui-sans-serif, system-ui, sans-serif;
-  --font-mono: 'Geist Mono', ui-monospace, monospace;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: ui-monospace, monospace;
 
   /* Radius */
   --radius-sm: 4px;
   --radius-md: 6px;
-  --radius-lg: 10px;
+  --radius-lg: 8px;
 }
 
 /* ─── Base reset ─────────────────────────────────────────────── */
@@ -60,12 +59,12 @@ html, body, #root {
   -webkit-font-smoothing: antialiased;
 }
 
-/* ─── React Flow overrides ───────────────────────────────────── */
-.react-flow__background { background-color: var(--color-background) !important; }
-.react-flow__controls   { background: var(--color-card) !important; border: 1px solid var(--color-border) !important; border-radius: var(--radius-md) !important; box-shadow: 0 2px 8px rgba(0,0,0,0.4) !important; }
-.react-flow__controls-button { background: transparent !important; border: none !important; color: var(--color-muted-foreground) !important; }
+/* ─── React Flow overrides (light) ──────────────────────────── */
+.react-flow__background          { background-color: var(--color-background) !important; }
+.react-flow__controls            { background: var(--color-card) !important; border: 1px solid var(--color-border) !important; border-radius: var(--radius-md) !important; box-shadow: 0 1px 4px rgba(0,0,0,0.08) !important; }
+.react-flow__controls-button     { background: transparent !important; border: none !important; color: var(--color-muted-foreground) !important; }
 .react-flow__controls-button:hover { background: var(--color-muted) !important; color: var(--color-foreground) !important; }
-.react-flow__minimap    { background: var(--color-card) !important; border: 1px solid var(--color-border) !important; border-radius: var(--radius-md) !important; }
-.react-flow__edge-path  { stroke: #3f3f46 !important; stroke-width: 1.5px !important; }
-.react-flow__edge.selected .react-flow__edge-path { stroke: var(--color-primary) !important; }
-.react-flow__handle     { width: 10px !important; height: 10px !important; border: 2px solid var(--color-card) !important; border-radius: 50% !important; }
+.react-flow__minimap             { background: var(--color-card) !important; border: 1px solid var(--color-border) !important; border-radius: var(--radius-md) !important; }
+.react-flow__edge-path           { stroke: #d4d4d8 !important; stroke-width: 1.5px !important; }
+.react-flow__edge.selected .react-flow__edge-path { stroke: #18181b !important; }
+.react-flow__handle              { width: 10px !important; height: 10px !important; border: 2px solid #fff !important; border-radius: 50% !important; }

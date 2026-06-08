@@ -99,11 +99,10 @@ export default function App() {
             nodeTypes={RF_NODE_TYPES}
             deleteKeyCode="Delete"
             fitView
-            colorMode="dark"
           >
-            <Background color="#313149" gap={20} size={1} />
+            <Background color="#d4d4d8" gap={20} size={1} />
             <Controls />
-            <MiniMap nodeColor="#1e1e2e" maskColor="rgba(17,17,27,0.7)" />
+            <MiniMap nodeColor="#e4e4e7" maskColor="rgba(250,250,250,0.7)" />
           </ReactFlow>
         </div>
       </div>

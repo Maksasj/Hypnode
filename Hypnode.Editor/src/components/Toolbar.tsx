@@ -32,24 +32,24 @@ export function Toolbar({ nodes, edges, onImport, onClear }: Props) {
   }
 
   return (
-    <header className="h-12 px-4 flex items-center justify-between bg-card border-b border-border shrink-0 z-10">
+    <header className="h-12 px-4 flex items-center justify-between bg-white border-b border-zinc-200 shrink-0">
       {/* Brand */}
       <div className="flex items-center gap-2.5">
-        <div className="w-6 h-6 rounded-md bg-primary flex items-center justify-center">
-          <Workflow size={13} className="text-primary-foreground" strokeWidth={2.5} />
+        <div className="w-6 h-6 rounded-md bg-zinc-900 flex items-center justify-center">
+          <Workflow size={13} className="text-white" strokeWidth={2.5} />
         </div>
-        <span className="text-sm font-semibold text-foreground tracking-tight">Hypnode</span>
-        <span className="text-sm text-muted-foreground font-normal">Editor</span>
+        <span className="text-sm font-semibold text-zinc-900 tracking-tight">Hypnode</span>
+        <span className="text-sm text-zinc-400 font-normal">Editor</span>
       </div>
 
       {/* Actions */}
-      <div className="flex items-center gap-1.5">
+      <div className="flex items-center gap-1">
         <button
           onClick={handleImport}
           className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md text-[12px] font-medium
-                     text-muted-foreground hover:text-foreground hover:bg-muted
-                     transition-colors duration-150 focus-visible:outline-none
-                     focus-visible:ring-2 focus-visible:ring-ring"
+                     text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100
+                     transition-colors duration-100 focus-visible:outline-none
+                     focus-visible:ring-2 focus-visible:ring-zinc-900"
         >
           <Upload size={13} strokeWidth={2} />
           Import
@@ -58,22 +58,22 @@ export function Toolbar({ nodes, edges, onImport, onClear }: Props) {
         <button
           onClick={handleExport}
           className="inline-flex items-center gap-1.5 h-8 px-3 rounded-md text-[12px] font-medium
-                     bg-primary text-primary-foreground hover:bg-primary/90
-                     transition-colors duration-150 focus-visible:outline-none
-                     focus-visible:ring-2 focus-visible:ring-ring"
+                     bg-zinc-900 text-white hover:bg-zinc-700
+                     transition-colors duration-100 focus-visible:outline-none
+                     focus-visible:ring-2 focus-visible:ring-zinc-900"
         >
           <Download size={13} strokeWidth={2} />
           Export XML
         </button>
 
-        <div className="w-px h-5 bg-border mx-1" />
+        <div className="w-px h-5 bg-zinc-200 mx-1" />
 
         <button
           onClick={onClear}
           className="inline-flex items-center justify-center w-8 h-8 rounded-md
-                     text-muted-foreground hover:text-destructive hover:bg-destructive/10
-                     transition-colors duration-150 focus-visible:outline-none
-                     focus-visible:ring-2 focus-visible:ring-ring"
+                     text-zinc-400 hover:text-red-500 hover:bg-red-50
+                     transition-colors duration-100 focus-visible:outline-none
+                     focus-visible:ring-2 focus-visible:ring-zinc-900"
           title="Clear canvas"
         >
           <Trash2 size={14} strokeWidth={2} />
