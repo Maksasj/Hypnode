@@ -24,9 +24,11 @@ export const NODE_TYPES: Record<string, NodeTypeDef> = {
   'splitter-logic': { label: 'Splitter Logic', category: 'Routing', ports: [{ id: 'IN', label: 'IN', direction: 'input', dataType: 'LogicValue' }, { id: 'OUT', label: 'OUT', direction: 'output', dataType: 'LogicValue' }] },
   'if-even':        { label: 'If Even',        category: 'Routing', ports: [{ id: 'IN', label: 'IN', direction: 'input', dataType: 'int' }, { id: 'THEN', label: 'THEN', direction: 'output', dataType: 'int' }, { id: 'ELSE', label: 'ELSE', direction: 'output', dataType: 'int' }] },
   'if-positive':    { label: 'If Positive',    category: 'Routing', ports: [{ id: 'IN', label: 'IN', direction: 'input', dataType: 'int' }, { id: 'THEN', label: 'THEN', direction: 'output', dataType: 'int' }, { id: 'ELSE', label: 'ELSE', direction: 'output', dataType: 'int' }] },
+  'delay-int':      { label: 'Delay Int',      category: 'Routing', params: [{ name: 'value', default: '0' }], ports: [{ id: 'IN', label: 'IN', direction: 'input', dataType: 'int' }, { id: 'OUT', label: 'OUT', direction: 'output', dataType: 'int' }] },
 
   // Transform
-  'squarer':         { label: 'Squarer',          category: 'Transform', ports: [{ id: 'IN', label: 'IN', direction: 'input', dataType: 'int' }, { id: 'OUT', label: 'OUT', direction: 'output', dataType: 'int' }] },
+  'add-int':         { label: 'Add Int',           category: 'Transform', ports: [{ id: 'IN1', label: 'A', direction: 'input', dataType: 'int' }, { id: 'IN2', label: 'B', direction: 'input', dataType: 'int' }, { id: 'OUT', label: 'OUT', direction: 'output', dataType: 'int' }] },
+  'squarer':         { label: 'Squarer',            category: 'Transform', ports: [{ id: 'IN', label: 'IN', direction: 'input', dataType: 'int' }, { id: 'OUT', label: 'OUT', direction: 'output', dataType: 'int' }] },
   'fold-sum':        { label: 'Fold Sum',          category: 'Transform', ports: [{ id: 'IN', label: 'IN', direction: 'input', dataType: 'int' }, { id: 'OUT', label: 'OUT', direction: 'output', dataType: 'int' }] },
   'fold-product':    { label: 'Fold Product',      category: 'Transform', ports: [{ id: 'IN', label: 'IN', direction: 'input', dataType: 'int' }, { id: 'OUT', label: 'OUT', direction: 'output', dataType: 'int' }] },
   'fold-count':      { label: 'Fold Count',        category: 'Transform', ports: [{ id: 'IN', label: 'IN', direction: 'input', dataType: 'int' }, { id: 'OUT', label: 'OUT', direction: 'output', dataType: 'int' }] },

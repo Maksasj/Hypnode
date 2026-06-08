@@ -115,7 +115,11 @@ internal static class Program
               if-even           Route ints: even -> THEN, odd  -> ELSE
               if-positive       Route ints: > 0  -> THEN, else -> ELSE
 
+              -- feedback / cycles --
+              delay-int         Latch node: emits seed, then echoes each input next tick  param: value
+
               -- transform --
+              add-int           Sum two int streams (IN1, IN2 → OUT)
               squarer           Square each int packet
               fold-sum          Running sum of ints
               fold-product      Running product of ints
@@ -169,6 +173,8 @@ internal static class Program
         .Register("if-positive", () => new IfNode<int>(x => x > 0))
 
         // transform
+        .Register("delay-int", p => new DelayNode<int>(int.Parse(p["value"])))
+        .Register("add-int", () => new AddIntNode())
         .Register("squarer", () => new Squarer())
         .Register("fold-sum", () => new FoldNode<int, int>(0, (acc, x) => acc + x))
         .Register("fold-product", () => new FoldNode<int, int>(1, (acc, x) => acc * x))
