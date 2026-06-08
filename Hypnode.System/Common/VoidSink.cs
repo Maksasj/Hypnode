@@ -11,7 +11,8 @@ public class VoidSink<T> : INode
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (connection is Connection<T> conn) _inputPorts.Add(conn);
+        if (portName == Input && connection is Connection<T> conn)
+            _inputPorts.Add(conn);
         return this;
     }
 

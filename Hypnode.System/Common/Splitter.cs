@@ -5,16 +5,13 @@ namespace Hypnode.System.Common;
 
 public class Splitter<T> : INode
 {
-    public const string Input = "IN";
-    public const string Output = "OUT";
-
     private Connection<T>? _inputPort = null;
     private readonly List<Connection<T>> _outputPorts = [];
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Input && connection is Connection<T> con0) _inputPort = con0;
-        if (portName == Output && connection is Connection<T> con1) _outputPorts.Add(con1);
+        if (portName == Ports.Input  && connection is Connection<T> con0) _inputPort = con0;
+        if (portName == Ports.Output && connection is Connection<T> con1) _outputPorts.Add(con1);
         return this;
     }
 
@@ -28,11 +25,9 @@ public class Splitter<T> : INode
             if (!_inputPort.HasData) { yield return null; continue; }
 
             var packet = _inputPort.Receive();
-            foreach (var conn in _outputPorts)
-                conn.Send(packet);
+            foreach (var conn in _outputPorts) conn.Send(packet);
         }
 
-        foreach (var conn in _outputPorts)
-            conn.Close();
+        foreach (var conn in _outputPorts) conn.Close();
     }
 }

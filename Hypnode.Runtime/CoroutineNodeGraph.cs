@@ -1,18 +1,12 @@
-using Hypnode.Core;
 using System.Collections;
+using Hypnode.Core;
 
 namespace Hypnode.Runtime;
 
 public class CoroutineNodeGraph : INodeGraph
 {
-    public List<INode> Nodes { get; set; }
-    public List<IConnection> Connections { get; set; }
-
-    public CoroutineNodeGraph()
-    {
-        Nodes = [];
-        Connections = [];
-    }
+    public List<INode> Nodes { get; set; } = [];
+    public List<IConnection> Connections { get; set; } = [];
 
     public Connection<T> CreateConnection<T>()
     {
@@ -42,13 +36,12 @@ public class CoroutineNodeGraph : INodeGraph
                 {
                     if (coroutine.Current is INodeGraph subGraph)
                         subGraph.Evaluate();
-
                     next.Add(coroutine);
                 }
             }
 
             if (next.Count == countBefore && !Connections.Any(c => c.HasData))
-                throw new InvalidOperationException("Deadlock detected: all nodes are waiting but no data is available");
+                throw new InvalidOperationException("Deadlock: all nodes waiting, no data in flight");
 
             coroutines = next;
         }

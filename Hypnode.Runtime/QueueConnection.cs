@@ -14,27 +14,19 @@ public class QueueConnection<T> : Connection<T>
     {
         if (_buffer.Count == 0)
             throw new InvalidOperationException("No data available in connection");
-
         return _buffer.Dequeue();
     }
 
     public override bool TryReceive(out T packet)
     {
-        if (_buffer.Count > 0)
-        {
-            packet = _buffer.Dequeue();
-            return true;
-        }
-
+        if (_buffer.Count > 0) { packet = _buffer.Dequeue(); return true; }
         packet = default!;
         return false;
     }
 
     public override void Send(T packet)
     {
-        if (_closed)
-            throw new InvalidOperationException("Cannot send to a _closed connection");
-
+        if (_closed) throw new InvalidOperationException("Cannot send to a closed connection");
         _buffer.Enqueue(packet);
     }
 
