@@ -37,4 +37,3 @@ public abstract class ByteSplitterInTests<TGraph> where TGraph : INodeGraph, new
 }
 
 [TestFixture] public class CoroutineNodeGraph_ByteSplitterInTests : ByteSplitterInTests<CoroutineNodeGraph> { }
-[TestFixture] public class SequenceNodeGraph_ByteSplitterInTests  : ByteSplitterInTests<SequenceNodeGraph>  { }

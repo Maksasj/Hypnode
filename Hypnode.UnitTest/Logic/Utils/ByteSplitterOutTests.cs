@@ -19,14 +19,17 @@ public abstract class ByteSplitterOutTests<TGraph> where TGraph : INodeGraph, ne
     {
         var graph = new TGraph();
         LogicValue[] bits = [b0, b1, b2, b3, b4, b5, b6, b7];
-        var splitter = graph.AddNode(new ByteSplitterOut());
 
+        var conns = new Connection<LogicValue>[8];
         for (int i = 0; i < 8; i++)
         {
-            var conn = graph.CreateConnection<LogicValue>();
-            graph.AddNode(new PulseValue<LogicValue>(bits[i])).SetPort(Ports.Output, conn);
-            splitter.SetPort(i.ToString(), conn);
+            conns[i] = graph.CreateConnection<LogicValue>();
+            graph.AddNode(new PulseValue<LogicValue>(bits[i])).SetPort(Ports.Output, conns[i]);
         }
+
+        var splitter = graph.AddNode(new ByteSplitterOut());
+        for (int i = 0; i < 8; i++)
+            splitter.SetPort(i.ToString(), conns[i]);
 
         var resultConn = graph.CreateConnection<byte>();
         splitter.SetPort(Ports.Output, resultConn);
@@ -41,4 +44,3 @@ public abstract class ByteSplitterOutTests<TGraph> where TGraph : INodeGraph, ne
 }
 
 [TestFixture] public class CoroutineNodeGraph_ByteSplitterOutTests : ByteSplitterOutTests<CoroutineNodeGraph> { }
-[TestFixture] public class SequenceNodeGraph_ByteSplitterOutTests  : ByteSplitterOutTests<SequenceNodeGraph>  { }

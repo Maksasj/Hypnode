@@ -43,4 +43,3 @@ public abstract class FullAdderByteTests<TGraph> where TGraph : INodeGraph, new(
 }
 
 [TestFixture] public class CoroutineNodeGraph_FullAdderByteTests : FullAdderByteTests<CoroutineNodeGraph> { }
-[TestFixture] public class SequenceNodeGraph_FullAdderByteTests  : FullAdderByteTests<SequenceNodeGraph>  { }

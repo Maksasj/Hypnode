@@ -1,3 +1,1 @@
-namespace Hypnode.Runtime;
-
-public class SequenceConnection<T> : QueueConnection<T> { }
+// Removed — use CoroutineNodeGraph instead

@@ -33,4 +33,3 @@ public abstract class XorGateTests<TGraph> where TGraph : INodeGraph, new()
 }
 
 [TestFixture] public class CoroutineNodeGraph_XorGateTests : XorGateTests<CoroutineNodeGraph> { }
-[TestFixture] public class SequenceNodeGraph_XorGateTests  : XorGateTests<SequenceNodeGraph>  { }

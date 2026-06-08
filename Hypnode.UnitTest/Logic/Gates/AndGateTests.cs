@@ -33,4 +33,3 @@ public abstract class AndGateTests<TGraph> where TGraph : INodeGraph, new()
 }
 
 [TestFixture] public class CoroutineNodeGraph_AndGateTests : AndGateTests<CoroutineNodeGraph> { }
-[TestFixture] public class SequenceNodeGraph_AndGateTests  : AndGateTests<SequenceNodeGraph>  { }

@@ -68,4 +68,3 @@ public abstract class VoidTests<TGraph> where TGraph : INodeGraph, new()
 }
 
 [TestFixture] public class CoroutineNodeGraph_VoidTests : VoidTests<CoroutineNodeGraph> { }
-[TestFixture] public class SequenceNodeGraph_VoidTests  : VoidTests<SequenceNodeGraph>  { }

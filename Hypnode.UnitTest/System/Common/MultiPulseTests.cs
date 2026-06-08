@@ -41,4 +41,3 @@ public abstract class MultiPulseTests<TGraph> where TGraph : INodeGraph, new()
 }
 
 [TestFixture] public class CoroutineNodeGraph_MultiPulseTests : MultiPulseTests<CoroutineNodeGraph> { }
-[TestFixture] public class SequenceNodeGraph_MultiPulseTests  : MultiPulseTests<SequenceNodeGraph>  { }

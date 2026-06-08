@@ -33,4 +33,3 @@ public abstract class OrGateTests<TGraph> where TGraph : INodeGraph, new()
 }
 
 [TestFixture] public class CoroutineNodeGraph_OrGateTests : OrGateTests<CoroutineNodeGraph> { }
-[TestFixture] public class SequenceNodeGraph_OrGateTests  : OrGateTests<SequenceNodeGraph>  { }

@@ -29,4 +29,3 @@ public abstract class NotGateTests<TGraph> where TGraph : INodeGraph, new()
 }
 
 [TestFixture] public class CoroutineNodeGraph_NotGateTests : NotGateTests<CoroutineNodeGraph> { }
-[TestFixture] public class SequenceNodeGraph_NotGateTests  : NotGateTests<SequenceNodeGraph>  { }

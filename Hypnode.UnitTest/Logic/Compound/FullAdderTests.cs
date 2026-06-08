@@ -49,4 +49,3 @@ public abstract class FullAdderTests<TGraph> where TGraph : INodeGraph, new()
 }
 
 [TestFixture] public class CoroutineNodeGraph_FullAdderTests : FullAdderTests<CoroutineNodeGraph> { }
-[TestFixture] public class SequenceNodeGraph_FullAdderTests  : FullAdderTests<SequenceNodeGraph>  { }

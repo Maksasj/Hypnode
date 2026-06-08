@@ -32,4 +32,3 @@ public abstract class SquarerTests<TGraph> where TGraph : INodeGraph, new()
 }
 
 [TestFixture] public class CoroutineNodeGraph_SquarerTests : SquarerTests<CoroutineNodeGraph> { }
-[TestFixture] public class SequenceNodeGraph_SquarerTests  : SquarerTests<SequenceNodeGraph>  { }
