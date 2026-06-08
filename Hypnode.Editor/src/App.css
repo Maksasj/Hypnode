@@ -1,0 +1,21 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background: #1e1e2e;
+  color: #cdd6f4;
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+}
+
+.app__workspace {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+.app__canvas {
+  flex: 1;
+  position: relative;
+}

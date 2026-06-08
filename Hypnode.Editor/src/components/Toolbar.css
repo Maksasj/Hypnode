@@ -1,0 +1,63 @@
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  height: 44px;
+  background: #11111b;
+  border-bottom: 1px solid #313149;
+  flex-shrink: 0;
+  z-index: 10;
+}
+
+.toolbar__brand {
+  font-size: 13px;
+  font-weight: 700;
+  color: #cdd6f4;
+  letter-spacing: 0.5px;
+}
+
+.toolbar__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.toolbar__btn {
+  padding: 5px 14px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid #45475a;
+  background: #313149;
+  color: #cdd6f4;
+  transition: background 0.1s, border-color 0.1s;
+}
+
+.toolbar__btn:hover {
+  background: #45475a;
+  border-color: #585b70;
+}
+
+.toolbar__btn--primary {
+  background: #1e66f5;
+  border-color: #1e66f5;
+  color: #fff;
+}
+
+.toolbar__btn--primary:hover {
+  background: #3d87ff;
+  border-color: #3d87ff;
+}
+
+.toolbar__btn--danger {
+  background: transparent;
+  border-color: #313149;
+  color: #6c7086;
+}
+
+.toolbar__btn--danger:hover {
+  background: #45475a;
+  color: #f38ba8;
+  border-color: #f38ba8;
+}
