@@ -19,7 +19,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Hypnode.Runtime\Hypnode.Runtime.csproj" />
     <ProjectReference Include="..\Hypnode.Core\Hypnode.Core.csproj" />
     <ProjectReference Include="..\Hypnode.Logic\Hypnode.Logic.csproj" />
     <ProjectReference Include="..\Hypnode.System\Hypnode.System.csproj" />

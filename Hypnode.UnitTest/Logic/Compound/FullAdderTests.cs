@@ -1,7 +1,6 @@
 using Hypnode.Core;
 using Hypnode.Logic;
 using Hypnode.Logic.Compound;
-using Hypnode.Runtime;
 using Hypnode.System.Common;
 
 namespace Hypnode.UnitTests.Logic.Compound;
