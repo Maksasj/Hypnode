@@ -24,7 +24,6 @@ namespace Hypnode.Logic.Utils
             if (portName == "5" && connection is Connection<LogicValue> conn5) outputPorts[5] = conn5;
             if (portName == "6" && connection is Connection<LogicValue> conn6) outputPorts[6] = conn6;
             if (portName == "7" && connection is Connection<LogicValue> conn7) outputPorts[7] = conn7;
-            if (portName == "8" && connection is Connection<LogicValue> conn8) outputPorts[8] = conn8;
 
             return this;
         }

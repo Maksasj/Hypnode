@@ -8,7 +8,7 @@ namespace Hypnode.System.IO
 
         public INode SetPort(string portName, IConnection connection)
         {
-            if (portName == "IN" && inputPort is Connection<bool> con) inputPort = con;
+            if (portName == "IN" && connection is Connection<bool> con) inputPort = con;
             return this;
         }
 
