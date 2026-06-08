@@ -72,8 +72,10 @@ export default function App() {
 
   function handleImport(importedNodes: Node[], importedEdges: Edge[]) {
     nodeIdCounter = importedNodes.length + 1;
+    setEdges([]);
     setNodes(importedNodes);
-    setEdges(importedEdges);
+    // Delay edge creation by two frames so React Flow registers all handles first
+    requestAnimationFrame(() => requestAnimationFrame(() => setEdges(importedEdges)));
   }
 
   return (

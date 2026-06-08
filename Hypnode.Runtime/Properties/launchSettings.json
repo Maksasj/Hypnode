@@ -2,7 +2,7 @@
   "profiles": {
     "Hypnode.Runtime": {
       "commandName": "Project",
-      "commandLineArgs": "counter.xml",
+      "commandLineArgs": "fibonacci.xml",
       "workingDirectory": "$(SolutionDir)Samples"
     }
   }
