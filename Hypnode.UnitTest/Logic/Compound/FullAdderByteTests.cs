@@ -20,17 +20,17 @@ public class FullAdderByteTests
     [TestCase(0b11111111, 0b00000000)]
     public void TestFullAdderByte_CorrectValues(byte a, byte b)
     {
-        var graph  = new CoroutineNodeGraph();
-        var ain    = graph.CreateConnection<byte>();
-        var bin    = graph.CreateConnection<byte>();
+        var graph = new CoroutineNodeGraph();
+        var ain = graph.CreateConnection<byte>();
+        var bin = graph.CreateConnection<byte>();
         var outSum = graph.CreateConnection<byte>();
 
         graph.AddNode(new PulseValue<byte>(a)).SetPort(Ports.Output, ain);
         graph.AddNode(new PulseValue<byte>(b)).SetPort(Ports.Output, bin);
 
         graph.AddNode(new FullAdderByte())
-            .SetPort(FullAdderByte.InputA,    ain)
-            .SetPort(FullAdderByte.InputB,    bin)
+            .SetPort(FullAdderByte.InputA, ain)
+            .SetPort(FullAdderByte.InputB, bin)
             .SetPort(FullAdderByte.OutputSum, outSum);
 
         var sumCell = new Register<byte>();

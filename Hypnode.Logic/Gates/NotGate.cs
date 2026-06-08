@@ -12,7 +12,7 @@ public class NotGate : INode
     {
         var result = portName switch
         {
-            Ports.Input  => NodeExtensions.TryAttach(ref _inputPort, connection),
+            Ports.Input => NodeExtensions.TryAttach(ref _inputPort, connection),
             Ports.Output => NodeExtensions.TryAttach(ref _outputPort, connection),
             _ => throw new InvalidOperationException($"Unknown port '{portName}'"),
         };

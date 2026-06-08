@@ -9,14 +9,14 @@ namespace Hypnode.UnitTests.Logic.Gates;
 public class AndGateTests
 {
     [TestCase(LogicValue.False, LogicValue.False, LogicValue.False)]
-    [TestCase(LogicValue.False, LogicValue.True,  LogicValue.False)]
-    [TestCase(LogicValue.True,  LogicValue.False, LogicValue.False)]
-    [TestCase(LogicValue.True,  LogicValue.True,  LogicValue.True)]
+    [TestCase(LogicValue.False, LogicValue.True, LogicValue.False)]
+    [TestCase(LogicValue.True, LogicValue.False, LogicValue.False)]
+    [TestCase(LogicValue.True, LogicValue.True, LogicValue.True)]
     public void TestAnd_CorrectValue(LogicValue a, LogicValue b, LogicValue expected)
     {
-        var graph  = new CoroutineNodeGraph();
-        var connA  = graph.CreateConnection<LogicValue>();
-        var connB  = graph.CreateConnection<LogicValue>();
+        var graph = new CoroutineNodeGraph();
+        var connA = graph.CreateConnection<LogicValue>();
+        var connB = graph.CreateConnection<LogicValue>();
         var connOut = graph.CreateConnection<LogicValue>();
 
         graph.AddNode(new PulseValue<LogicValue>(a)).SetPort(Ports.Output, connA);

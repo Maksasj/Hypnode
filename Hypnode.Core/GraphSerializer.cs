@@ -12,7 +12,7 @@ public static class GraphSerializer
                 new XElement("Nodes",
                     definition.Nodes.Select(n =>
                         new XElement("Node",
-                            new XAttribute("id",   n.Id),
+                            new XAttribute("id", n.Id),
                             new XAttribute("type", n.TypeName),
                             n.Parameters.Count > 0
                                 ? new XElement("Parameters",
@@ -37,7 +37,7 @@ public static class GraphSerializer
 
     public static GraphDefinition Deserialize(string xml)
     {
-        var root       = XDocument.Parse(xml).Root!;
+        var root = XDocument.Parse(xml).Root!;
         var definition = new GraphDefinition();
 
         foreach (var el in root.Element("Nodes")?.Elements("Node") ?? [])
@@ -57,7 +57,7 @@ public static class GraphSerializer
         foreach (var el in root.Element("Connections")?.Elements("Connection") ?? [])
         {
             var from = el.Element("From")!;
-            var to   = el.Element("To")!;
+            var to = el.Element("To")!;
             definition.Connect(
                 el.Attribute("type")!.Value,
                 from.Attribute("node")!.Value,

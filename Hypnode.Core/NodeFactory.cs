@@ -6,11 +6,11 @@ public class NodeFactory
 
     private readonly Dictionary<string, Func<INodeGraph, IConnection>> _connectionCreators = new()
     {
-        ["int"]    = g => g.CreateConnection<int>(),
+        ["int"] = g => g.CreateConnection<int>(),
         ["string"] = g => g.CreateConnection<string>(),
-        ["bool"]   = g => g.CreateConnection<bool>(),
-        ["byte"]   = g => g.CreateConnection<byte>(),
-        ["float"]  = g => g.CreateConnection<float>(),
+        ["bool"] = g => g.CreateConnection<bool>(),
+        ["byte"] = g => g.CreateConnection<byte>(),
+        ["float"] = g => g.CreateConnection<float>(),
         ["double"] = g => g.CreateConnection<double>(),
     };
 
@@ -31,7 +31,7 @@ public class NodeFactory
 
     public CoroutineNodeGraph Build(GraphDefinition definition)
     {
-        var graph    = new CoroutineNodeGraph();
+        var graph = new CoroutineNodeGraph();
         var nodeById = new Dictionary<string, INode>();
 
         foreach (var nd in definition.Nodes)

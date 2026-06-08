@@ -19,9 +19,9 @@ public class FullAdderByte : INode
     {
         var result = portName switch
         {
-            InputA    => NodeExtensions.TryAttach(ref _aPort, connection),
-            InputB    => NodeExtensions.TryAttach(ref _bPort, connection),
-            OutputSum => NodeExtensions.TryAttach(ref _sum,   connection),
+            InputA => NodeExtensions.TryAttach(ref _aPort, connection),
+            InputB => NodeExtensions.TryAttach(ref _bPort, connection),
+            OutputSum => NodeExtensions.TryAttach(ref _sum, connection),
             _ => throw new InvalidOperationException($"Unknown port '{portName}'"),
         };
 
@@ -63,9 +63,9 @@ public class FullAdderByte : INode
 
             for (int i = 0; i < 8; ++i)
             {
-                var adder  = graph.AddNode(new FullAdder());
-                var aWire  = graph.CreateConnection<LogicValue>();
-                var bWire  = graph.CreateConnection<LogicValue>();
+                var adder = graph.AddNode(new FullAdder());
+                var aWire = graph.CreateConnection<LogicValue>();
+                var bWire = graph.CreateConnection<LogicValue>();
 
                 aDemux.SetPort(i.ToString(), aWire);
                 bDemux.SetPort(i.ToString(), bWire);
@@ -78,11 +78,11 @@ public class FullAdderByte : INode
                 var sumWire = graph.CreateConnection<LogicValue>();
                 sumWires[i] = sumWire;
 
-                adder.SetPort(FullAdder.OutputSum,   sumWire);
+                adder.SetPort(FullAdder.OutputSum, sumWire);
                 adder.SetPort(FullAdder.OutputCarry, carry);
             }
 
-            var sumMux     = graph.AddNode(new ByteSplitterOut());
+            var sumMux = graph.AddNode(new ByteSplitterOut());
             var resultWire = graph.CreateConnection<byte>();
 
             for (int i = 0; i < 8; ++i)

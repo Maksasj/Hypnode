@@ -8,14 +8,14 @@ public class ZipNode<T1, T2> : INode
     public const string Input1 = "IN1";
     public const string Input2 = "IN2";
 
-    private Connection<T1>?         _inputPort1 = null;
-    private Connection<T2>?         _inputPort2 = null;
-    private Connection<(T1, T2)>?   _outputPort = null;
+    private Connection<T1>? _inputPort1 = null;
+    private Connection<T2>? _inputPort2 = null;
+    private Connection<(T1, T2)>? _outputPort = null;
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Input1      && connection is Connection<T1>       con0) _inputPort1 = con0;
-        if (portName == Input2      && connection is Connection<T2>       con1) _inputPort2 = con1;
+        if (portName == Input1 && connection is Connection<T1> con0) _inputPort1 = con0;
+        if (portName == Input2 && connection is Connection<T2> con1) _inputPort2 = con1;
         if (portName == Ports.Output && connection is Connection<(T1, T2)> con2) _outputPort = con2;
         return this;
     }

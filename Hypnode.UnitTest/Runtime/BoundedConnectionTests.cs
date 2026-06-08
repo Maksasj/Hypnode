@@ -14,10 +14,10 @@ public class BoundedConnectionTests
         conn.Send(2);
 
         Assert.That(conn.HasData, Is.True);
-        Assert.That(conn.IsFull,  Is.False);
+        Assert.That(conn.IsFull, Is.False);
         Assert.That(conn.Receive(), Is.EqualTo(1));
         Assert.That(conn.Receive(), Is.EqualTo(2));
-        Assert.That(conn.HasData,  Is.False);
+        Assert.That(conn.HasData, Is.False);
     }
 
     [Test]
@@ -59,8 +59,8 @@ public class BoundedConnectionTests
     [Test]
     public void TestBoundedConnection_InGraph_DataFlowsCorrectly()
     {
-        var graph  = new CoroutineNodeGraph();
-        var pulse  = graph.AddNode(new PulseValue<int>(7));
+        var graph = new CoroutineNodeGraph();
+        var pulse = graph.AddNode(new PulseValue<int>(7));
         var result = graph.AddNode(new Register<int>());
 
         graph.AddBoundedConnection<int>(pulse, Ports.Output, result, Ports.Input, capacity: 4);

@@ -12,9 +12,9 @@ public class MultiPulseTests
     [TestCase(LogicValue.True)]
     public void TestMultiPulse_SingleElement_CorrectValue(LogicValue value)
     {
-        var graph      = new CoroutineNodeGraph();
+        var graph = new CoroutineNodeGraph();
         var multiPulse = graph.AddNode(new MultiPulseValue<LogicValue>([value]));
-        var result     = graph.AddNode(new Register<LogicValue>());
+        var result = graph.AddNode(new Register<LogicValue>());
         graph.AddConnection<LogicValue>(multiPulse, Ports.Output, result, Ports.Input);
 
         graph.Evaluate();
@@ -29,12 +29,12 @@ public class MultiPulseTests
     public void TestMultiPulse_SingleElement_SendCloseExecuteOnce(int value)
     {
         var graph = new CoroutineNodeGraph();
-        var conn  = new Mock<Connection<int>>();
+        var conn = new Mock<Connection<int>>();
         graph.AddNode(new MultiPulseValue<int>([value])).SetPort(Ports.Output, conn.Object);
 
         graph.Evaluate();
 
         conn.Verify(c => c.Send(value), Times.Once);
-        conn.Verify(c => c.Close(),     Times.Once);
+        conn.Verify(c => c.Close(), Times.Once);
     }
 }

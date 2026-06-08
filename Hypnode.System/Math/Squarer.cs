@@ -10,7 +10,7 @@ public class Squarer : INode
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Ports.Input  && connection is Connection<int> con0) _inputPort = con0;
+        if (portName == Ports.Input && connection is Connection<int> con0) _inputPort = con0;
         if (portName == Ports.Output && connection is Connection<int> con1) _outputPort = con1;
         return this;
     }

@@ -2,10 +2,10 @@ namespace Hypnode.Core;
 
 public class BoundedQueueConnection<T> : Connection<T>
 {
-    private readonly Queue<T> _buffer      = new();
-    private readonly int      _capacity;
-    private bool              _closed      = false;
-    private bool              _hadActivity = false;
+    private readonly Queue<T> _buffer = new();
+    private readonly int _capacity;
+    private bool _closed = false;
+    private bool _hadActivity = false;
 
     public BoundedQueueConnection(int capacity)
     {
@@ -13,10 +13,10 @@ public class BoundedQueueConnection<T> : Connection<T>
         _capacity = capacity;
     }
 
-    public override bool HasData     => _buffer.Count > 0;
-    public override bool IsClosed    => _closed;
+    public override bool HasData => _buffer.Count > 0;
+    public override bool IsClosed => _closed;
     public override bool HadActivity => _hadActivity;
-    public override bool IsFull      => _buffer.Count >= _capacity;
+    public override bool IsFull => _buffer.Count >= _capacity;
 
     public override void Send(T packet)
     {
@@ -39,6 +39,6 @@ public class BoundedQueueConnection<T> : Connection<T>
         return false;
     }
 
-    public override void Close()         => _closed = true;
+    public override void Close() => _closed = true;
     public override void ResetActivity() => _hadActivity = false;
 }
