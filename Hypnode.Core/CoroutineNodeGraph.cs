@@ -36,6 +36,8 @@ public class CoroutineNodeGraph : INodeGraph
             int countBefore = coroutines.Count;
             var next = new List<IEnumerator>();
 
+            foreach (var c in Connections) c.ResetActivity();
+
             foreach (var coroutine in coroutines)
             {
                 if (coroutine.MoveNext())
@@ -46,7 +48,7 @@ public class CoroutineNodeGraph : INodeGraph
                 }
             }
 
-            if (next.Count == countBefore && !Connections.Any(c => c.HasData))
+            if (next.Count == countBefore && !Connections.Any(c => c.HasData || c.HadActivity))
                 throw new InvalidOperationException("Deadlock: all nodes waiting, no data in flight");
 
             coroutines = next;
