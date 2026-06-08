@@ -5,7 +5,8 @@ using Hypnode.System.Math;
 
 namespace Hypnode.UnitTests.System.Math;
 
-public abstract class SquarerTests<TGraph> where TGraph : INodeGraph, new()
+[TestFixture]
+public class SquarerTests
 {
     [TestCase(0)]
     [TestCase(1)]
@@ -17,7 +18,7 @@ public abstract class SquarerTests<TGraph> where TGraph : INodeGraph, new()
     [TestCase(-25)]
     public void TestSquarer_CorrectValue(int value)
     {
-        var graph   = new TGraph();
+        var graph   = new CoroutineNodeGraph();
         var pulse   = graph.AddNode(new PulseValue<int>(value));
         var squarer = graph.AddNode(new Squarer());
         var result  = graph.AddNode(new Register<int>());
@@ -30,5 +31,3 @@ public abstract class SquarerTests<TGraph> where TGraph : INodeGraph, new()
         Assert.That(result.GetValue(), Is.EqualTo(value * value));
     }
 }
-
-[TestFixture] public class CoroutineNodeGraph_SquarerTests : SquarerTests<CoroutineNodeGraph> { }

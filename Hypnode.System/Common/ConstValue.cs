@@ -5,10 +5,10 @@ namespace Hypnode.System.Common;
 
 public class ConstValue<T> : INode
 {
-    private T Value { get; set; }
+    private readonly T _value;
     private Connection<T>? _outputPort = null;
 
-    public ConstValue(T value) { Value = value; }
+    public ConstValue(T value) { _value = value; }
 
     public INode SetPort(string portName, IConnection connection)
     {
@@ -18,6 +18,6 @@ public class ConstValue<T> : INode
 
     public IEnumerator Execute()
     {
-        while (true) { _outputPort?.Send(Value); yield return null; }
+        while (true) { _outputPort?.Send(_value); yield return null; }
     }
 }

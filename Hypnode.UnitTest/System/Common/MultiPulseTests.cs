@@ -6,13 +6,14 @@ using Moq;
 
 namespace Hypnode.UnitTests.System.Common;
 
-public abstract class MultiPulseTests<TGraph> where TGraph : INodeGraph, new()
+[TestFixture]
+public class MultiPulseTests
 {
     [TestCase(LogicValue.False)]
     [TestCase(LogicValue.True)]
     public void TestMultiPulse_SingleElement_CorrectValue(LogicValue value)
     {
-        var graph      = new TGraph();
+        var graph      = new CoroutineNodeGraph();
         var multiPulse = graph.AddNode(new MultiPulseValue<LogicValue>([value]));
         var result     = graph.AddNode(new Register<LogicValue>());
         graph.AddConnection<LogicValue>(multiPulse, Ports.Output, result, Ports.Input);
@@ -28,16 +29,13 @@ public abstract class MultiPulseTests<TGraph> where TGraph : INodeGraph, new()
     [TestCase(-100)]
     public void TestMultiPulse_SingleElement_SendCloseExecuteOnce(int value)
     {
-        var graph      = new TGraph();
-        var connection = new Mock<Connection<int>>();
-        var multiPulse = graph.AddNode(new MultiPulseValue<int>([value]));
-        multiPulse.SetPort(Ports.Output, connection.Object);
+        var graph = new CoroutineNodeGraph();
+        var conn  = new Mock<Connection<int>>();
+        graph.AddNode(new MultiPulseValue<int>([value])).SetPort(Ports.Output, conn.Object);
 
         graph.Evaluate();
 
-        connection.Verify(c => c.Send(value), Times.Once);
-        connection.Verify(c => c.Close(),     Times.Once);
+        conn.Verify(c => c.Send(value), Times.Once);
+        conn.Verify(c => c.Close(),     Times.Once);
     }
 }
-
-[TestFixture] public class CoroutineNodeGraph_MultiPulseTests : MultiPulseTests<CoroutineNodeGraph> { }

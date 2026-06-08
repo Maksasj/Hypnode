@@ -5,10 +5,10 @@ namespace Hypnode.System.Common;
 
 public class MultiPulseValue<T> : INode
 {
-    private IEnumerable<T> Value { get; set; }
+    private readonly IEnumerable<T> _value;
     private Connection<T>? _outputPort = null;
 
-    public MultiPulseValue(IEnumerable<T> value) { Value = value; }
+    public MultiPulseValue(IEnumerable<T> value) { _value = value; }
 
     public INode SetPort(string portName, IConnection connection)
     {
@@ -18,7 +18,7 @@ public class MultiPulseValue<T> : INode
 
     public IEnumerator Execute()
     {
-        foreach (var item in Value)
+        foreach (var item in _value)
             _outputPort?.Send(item);
         _outputPort?.Close();
         yield break;

@@ -6,13 +6,14 @@ using Hypnode.System.Common;
 
 namespace Hypnode.UnitTests.Logic.Gates;
 
-public abstract class NotGateTests<TGraph> where TGraph : INodeGraph, new()
+[TestFixture]
+public class NotGateTests
 {
     [TestCase(LogicValue.False, LogicValue.True)]
     [TestCase(LogicValue.True,  LogicValue.False)]
     public void TestNot_CorrectValue(LogicValue value, LogicValue expected)
     {
-        var graph = new TGraph();
+        var graph  = new CoroutineNodeGraph();
         var connIn  = graph.CreateConnection<LogicValue>();
         var connOut = graph.CreateConnection<LogicValue>();
 
@@ -27,5 +28,3 @@ public abstract class NotGateTests<TGraph> where TGraph : INodeGraph, new()
         Assert.That(result.GetValue(), Is.EqualTo(expected));
     }
 }
-
-[TestFixture] public class CoroutineNodeGraph_NotGateTests : NotGateTests<CoroutineNodeGraph> { }

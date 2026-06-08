@@ -6,7 +6,7 @@ using System.Collections;
 
 namespace Hypnode.Logic.Compound;
 
-public class FullAdderByte(INodeGraph nodeGraph) : CompoundNode(nodeGraph)
+public class FullAdderByte : INode
 {
     public const string InputA = "INA";
     public const string InputB = "INB";
@@ -16,7 +16,7 @@ public class FullAdderByte(INodeGraph nodeGraph) : CompoundNode(nodeGraph)
     private Connection<byte>? _bPort = null;
     private Connection<byte>? _sum = null;
 
-    public override INode SetPort(string portName, IConnection connection)
+    public INode SetPort(string portName, IConnection connection)
     {
         var result = portName switch
         {
@@ -32,7 +32,7 @@ public class FullAdderByte(INodeGraph nodeGraph) : CompoundNode(nodeGraph)
         return this;
     }
 
-    public override IEnumerator Execute()
+    public IEnumerator Execute()
     {
         if (_aPort is null) throw new InvalidOperationException("Input port A is not set");
         if (_bPort is null) throw new InvalidOperationException("Input port B is not set");
@@ -64,7 +64,7 @@ public class FullAdderByte(INodeGraph nodeGraph) : CompoundNode(nodeGraph)
 
             for (int i = 0; i < 8; ++i)
             {
-                var adder  = graph.AddNode(new FullAdder(new CoroutineNodeGraph()));
+                var adder  = graph.AddNode(new FullAdder());
                 var aWire  = graph.CreateConnection<LogicValue>();
                 var bWire  = graph.CreateConnection<LogicValue>();
 

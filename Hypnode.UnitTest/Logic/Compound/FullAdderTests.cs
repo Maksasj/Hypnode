@@ -6,7 +6,8 @@ using Hypnode.System.Common;
 
 namespace Hypnode.UnitTests.Logic.Compound;
 
-public abstract class FullAdderTests<TGraph> where TGraph : INodeGraph, new()
+[TestFixture]
+public class FullAdderTests
 {
     [TestCase(LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False, LogicValue.False)]
     [TestCase(LogicValue.False, LogicValue.False, LogicValue.True,  LogicValue.True,  LogicValue.False)]
@@ -16,9 +17,10 @@ public abstract class FullAdderTests<TGraph> where TGraph : INodeGraph, new()
     [TestCase(LogicValue.True,  LogicValue.False, LogicValue.True,  LogicValue.False, LogicValue.True)]
     [TestCase(LogicValue.True,  LogicValue.True,  LogicValue.False, LogicValue.False, LogicValue.True)]
     [TestCase(LogicValue.True,  LogicValue.True,  LogicValue.True,  LogicValue.True,  LogicValue.True)]
-    public void TestFullAdder_CorrectValues(LogicValue a, LogicValue b, LogicValue cIn, LogicValue expectedSum, LogicValue expectedCarry)
+    public void TestFullAdder_CorrectValues(LogicValue a, LogicValue b, LogicValue cIn,
+        LogicValue expectedSum, LogicValue expectedCarry)
     {
-        var graph = new TGraph();
+        var graph  = new CoroutineNodeGraph();
         var ain    = graph.CreateConnection<LogicValue>();
         var bin    = graph.CreateConnection<LogicValue>();
         var cin    = graph.CreateConnection<LogicValue>();
@@ -29,7 +31,7 @@ public abstract class FullAdderTests<TGraph> where TGraph : INodeGraph, new()
         graph.AddNode(new PulseValue<LogicValue>(b)).SetPort(Ports.Output, bin);
         graph.AddNode(new PulseValue<LogicValue>(cIn)).SetPort(Ports.Output, cin);
 
-        graph.AddNode(new FullAdder(new CoroutineNodeGraph()))
+        graph.AddNode(new FullAdder())
             .SetPort(FullAdder.InputA,      ain)
             .SetPort(FullAdder.InputB,      bin)
             .SetPort(FullAdder.InputC,      cin)
@@ -47,5 +49,3 @@ public abstract class FullAdderTests<TGraph> where TGraph : INodeGraph, new()
         Assert.That(carryCell.GetValue(), Is.EqualTo(expectedCarry));
     }
 }
-
-[TestFixture] public class CoroutineNodeGraph_FullAdderTests : FullAdderTests<CoroutineNodeGraph> { }

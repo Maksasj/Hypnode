@@ -6,7 +6,8 @@ using Hypnode.System.Common;
 
 namespace Hypnode.UnitTests.Logic.Gates;
 
-public abstract class XorGateTests<TGraph> where TGraph : INodeGraph, new()
+[TestFixture]
+public class XorGateTests
 {
     [TestCase(LogicValue.False, LogicValue.False, LogicValue.False)]
     [TestCase(LogicValue.False, LogicValue.True,  LogicValue.True)]
@@ -14,14 +15,17 @@ public abstract class XorGateTests<TGraph> where TGraph : INodeGraph, new()
     [TestCase(LogicValue.True,  LogicValue.True,  LogicValue.False)]
     public void TestXor_CorrectValue(LogicValue a, LogicValue b, LogicValue expected)
     {
-        var graph = new TGraph();
-        var connA = graph.CreateConnection<LogicValue>();
-        var connB = graph.CreateConnection<LogicValue>();
+        var graph  = new CoroutineNodeGraph();
+        var connA  = graph.CreateConnection<LogicValue>();
+        var connB  = graph.CreateConnection<LogicValue>();
         var connOut = graph.CreateConnection<LogicValue>();
 
         graph.AddNode(new PulseValue<LogicValue>(a)).SetPort(Ports.Output, connA);
         graph.AddNode(new PulseValue<LogicValue>(b)).SetPort(Ports.Output, connB);
-        graph.AddNode(new XorGate()).SetPort(XorGate.InputA, connA).SetPort(XorGate.InputB, connB).SetPort(XorGate.Output, connOut);
+        graph.AddNode(new XorGate())
+            .SetPort(XorGate.InputA, connA)
+            .SetPort(XorGate.InputB, connB)
+            .SetPort(XorGate.Output, connOut);
 
         var result = new Register<LogicValue>();
         graph.AddNode(result).SetPort(Ports.Input, connOut);
@@ -31,5 +35,3 @@ public abstract class XorGateTests<TGraph> where TGraph : INodeGraph, new()
         Assert.That(result.GetValue(), Is.EqualTo(expected));
     }
 }
-
-[TestFixture] public class CoroutineNodeGraph_XorGateTests : XorGateTests<CoroutineNodeGraph> { }

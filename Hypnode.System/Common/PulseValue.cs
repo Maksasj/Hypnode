@@ -5,10 +5,10 @@ namespace Hypnode.System.Common;
 
 public class PulseValue<T> : INode
 {
-    private T Value { get; set; }
+    private readonly T _value;
     private Connection<T>? _outputPort = null;
 
-    public PulseValue(T value) { Value = value; }
+    public PulseValue(T value) { _value = value; }
 
     public INode SetPort(string portName, IConnection connection)
     {
@@ -18,7 +18,7 @@ public class PulseValue<T> : INode
 
     public IEnumerator Execute()
     {
-        _outputPort?.Send(Value);
+        _outputPort?.Send(_value);
         _outputPort?.Close();
         yield break;
     }

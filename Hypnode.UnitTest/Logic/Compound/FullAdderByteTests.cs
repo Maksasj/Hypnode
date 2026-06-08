@@ -5,7 +5,8 @@ using Hypnode.System.Common;
 
 namespace Hypnode.UnitTests.Logic.Compound;
 
-public abstract class FullAdderByteTests<TGraph> where TGraph : INodeGraph, new()
+[TestFixture]
+public class FullAdderByteTests
 {
     [TestCase(0b00000000, 0b00000000)]
     [TestCase(0b00001010, 0b00000000)]
@@ -20,7 +21,7 @@ public abstract class FullAdderByteTests<TGraph> where TGraph : INodeGraph, new(
     [TestCase(0b11111111, 0b00000000)]
     public void TestFullAdderByte_CorrectValues(byte a, byte b)
     {
-        var graph  = new TGraph();
+        var graph  = new CoroutineNodeGraph();
         var ain    = graph.CreateConnection<byte>();
         var bin    = graph.CreateConnection<byte>();
         var outSum = graph.CreateConnection<byte>();
@@ -28,7 +29,7 @@ public abstract class FullAdderByteTests<TGraph> where TGraph : INodeGraph, new(
         graph.AddNode(new PulseValue<byte>(a)).SetPort(Ports.Output, ain);
         graph.AddNode(new PulseValue<byte>(b)).SetPort(Ports.Output, bin);
 
-        graph.AddNode(new FullAdderByte(new TGraph()))
+        graph.AddNode(new FullAdderByte())
             .SetPort(FullAdderByte.InputA,    ain)
             .SetPort(FullAdderByte.InputB,    bin)
             .SetPort(FullAdderByte.OutputSum, outSum);
@@ -41,5 +42,3 @@ public abstract class FullAdderByteTests<TGraph> where TGraph : INodeGraph, new(
         Assert.That(sumCell.GetValue(), Is.EqualTo((byte)(a + b)));
     }
 }
-
-[TestFixture] public class CoroutineNodeGraph_FullAdderByteTests : FullAdderByteTests<CoroutineNodeGraph> { }
