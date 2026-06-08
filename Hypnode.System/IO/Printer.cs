@@ -5,31 +5,31 @@ namespace Hypnode.System.IO;
 
 public class Printer<T> : INode
 {
-    private Connection<T>? inputPort = null;
+    private Connection<T>? _inputPort = null;
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == "IN" && connection is Connection<T> conn) inputPort = conn;
+        if (portName == "IN" && connection is Connection<T> conn) _inputPort = conn;
         return this;
     }
 
     public IEnumerator Execute()
     {
-        if (inputPort is null)
+        if (_inputPort is null)
             throw new InvalidOperationException("Input port is not set");
 
         while (true)
         {
-            if (inputPort.IsClosed && !inputPort.HasData)
+            if (_inputPort.IsClosed && !_inputPort.HasData)
                 break;
 
-            if (!inputPort.HasData)
+            if (!_inputPort.HasData)
             {
                 yield return null;
                 continue;
             }
 
-            Console.WriteLine($"{inputPort.Receive()}");
+            Console.WriteLine($"{_inputPort.Receive()}");
         }
     }
 }

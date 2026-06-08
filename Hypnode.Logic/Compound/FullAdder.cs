@@ -6,53 +6,53 @@ using System.Collections;
 
 namespace Hypnode.Logic.Compound;
 
-public class FullAdder(INodeGraph nodeGraph) : ICompoundNode(nodeGraph)
+public class FullAdder(INodeGraph nodeGraph) : CompoundNode(nodeGraph)
 {
-    private Connection<LogicValue>? aPort = null;
-    private Connection<LogicValue>? bPort = null;
-    private Connection<LogicValue>? carryIn = null;
+    private Connection<LogicValue>? _aPort = null;
+    private Connection<LogicValue>? _bPort = null;
+    private Connection<LogicValue>? _carryIn = null;
 
-    private Connection<LogicValue>? sum = null;
-    private Connection<LogicValue>? carryOut = null;
+    private Connection<LogicValue>? _sum = null;
+    private Connection<LogicValue>? _carryOut = null;
 
     public override INode SetPort(string portName, IConnection connection)
     {
-        if (portName == "INA" && connection is Connection<LogicValue> con0) aPort = con0;
-        if (portName == "INB" && connection is Connection<LogicValue> con1) bPort = con1;
-        if (portName == "INC" && connection is Connection<LogicValue> con2) carryIn = con2;
-        if (portName == "OUTSUM" && connection is Connection<LogicValue> con3) sum = con3;
-        if (portName == "OUTC" && connection is Connection<LogicValue> con4) carryOut = con4;
+        if (portName == "INA" && connection is Connection<LogicValue> con0) _aPort = con0;
+        if (portName == "INB" && connection is Connection<LogicValue> con1) _bPort = con1;
+        if (portName == "INC" && connection is Connection<LogicValue> con2) _carryIn = con2;
+        if (portName == "OUTSUM" && connection is Connection<LogicValue> con3) _sum = con3;
+        if (portName == "OUTC" && connection is Connection<LogicValue> con4) _carryOut = con4;
 
         return this;
     }
 
     public override IEnumerator Execute()
     {
-        if (aPort is null)
+        if (_aPort is null)
             throw new InvalidOperationException("Input port A is not set");
 
-        if (bPort is null)
+        if (_bPort is null)
             throw new InvalidOperationException("Input port B is not set");
 
-        if (carryIn is null)
-            throw new InvalidOperationException("Input port carryIn is not set");
+        if (_carryIn is null)
+            throw new InvalidOperationException("Input port _carryIn is not set");
 
         while (true)
         {
-            if ((aPort.IsClosed && !aPort.HasData) ||
-                (bPort.IsClosed && !bPort.HasData) ||
-                (carryIn.IsClosed && !carryIn.HasData))
+            if ((_aPort.IsClosed && !_aPort.HasData) ||
+                (_bPort.IsClosed && !_bPort.HasData) ||
+                (_carryIn.IsClosed && !_carryIn.HasData))
                 break;
 
-            if (!aPort.HasData || !bPort.HasData || !carryIn.HasData)
+            if (!_aPort.HasData || !_bPort.HasData || !_carryIn.HasData)
             {
                 yield return null;
                 continue;
             }
 
-            var a = aPort.Receive();
-            var b = bPort.Receive();
-            var c = carryIn.Receive();
+            var a = _aPort.Receive();
+            var b = _bPort.Receive();
+            var c = _carryIn.Receive();
 
             var graph = new CoroutineNodeGraph();
             var AtoDemux1 = graph.CreateConnection<LogicValue>();
@@ -94,11 +94,11 @@ public class FullAdder(INodeGraph nodeGraph) : ICompoundNode(nodeGraph)
 
             yield return graph;
 
-            sum?.Send(sumCell.GetValue());
-            carryOut?.Send(carryCell.GetValue());
+            _sum?.Send(sumCell.GetValue());
+            _carryOut?.Send(carryCell.GetValue());
         }
 
-        sum?.Close();
-        carryOut?.Close();
+        _sum?.Close();
+        _carryOut?.Close();
     }
 }

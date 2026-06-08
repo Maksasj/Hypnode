@@ -6,7 +6,7 @@ namespace Hypnode.System.Common;
 public class PulseValue<T> : INode
 {
     private T Value { get; set; }
-    private Connection<T>? outputPort = null;
+    private Connection<T>? _outputPort = null;
 
     public PulseValue(T value)
     {
@@ -15,14 +15,14 @@ public class PulseValue<T> : INode
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == "OUT" && connection is Connection<T> con) outputPort = con;
+        if (portName == "OUT" && connection is Connection<T> con) _outputPort = con;
         return this;
     }
 
     public IEnumerator Execute()
     {
-        outputPort?.Send(Value);
-        outputPort?.Close();
+        _outputPort?.Send(Value);
+        _outputPort?.Close();
         yield break;
     }
 }

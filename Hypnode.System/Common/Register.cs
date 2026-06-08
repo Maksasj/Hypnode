@@ -5,34 +5,34 @@ namespace Hypnode.System.Common;
 
 public class Register<T> : INode
 {
-    private T? value;
-    private Connection<T>? inputPort = null;
+    private T? _value;
+    private Connection<T>? _inputPort = null;
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == "IN" && connection is Connection<T> con) inputPort = con;
+        if (portName == "IN" && connection is Connection<T> con) _inputPort = con;
         return this;
     }
 
-    public T? GetValue() => value;
+    public T? GetValue() => _value;
 
     public IEnumerator Execute()
     {
-        if (inputPort is null)
+        if (_inputPort is null)
             throw new InvalidOperationException("Input port is not set");
 
         while (true)
         {
-            if (inputPort.IsClosed && !inputPort.HasData)
+            if (_inputPort.IsClosed && !_inputPort.HasData)
                 break;
 
-            if (!inputPort.HasData)
+            if (!_inputPort.HasData)
             {
                 yield return null;
                 continue;
             }
 
-            value = inputPort.Receive();
+            _value = _inputPort.Receive();
         }
     }
 }

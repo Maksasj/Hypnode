@@ -2,11 +2,11 @@ using System.Collections;
 
 namespace Hypnode.Core;
 
-public abstract class ICompoundNode : INode
+public abstract class CompoundNode : INode
 {
     public INodeGraph NodeGraph { init; protected get; }
 
-    public ICompoundNode(INodeGraph nodeGraph)
+    public CompoundNode(INodeGraph nodeGraph)
     {
         NodeGraph = nodeGraph;
     }

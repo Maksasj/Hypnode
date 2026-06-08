@@ -5,17 +5,17 @@ namespace Hypnode.Logic.Gates;
 
 public class XorGate : INode
 {
-    private Connection<LogicValue>? inputPortA = null;
-    private Connection<LogicValue>? inputPortB = null;
-    private Connection<LogicValue>? outputPort = null;
+    private Connection<LogicValue>? _inputPortA = null;
+    private Connection<LogicValue>? _inputPortB = null;
+    private Connection<LogicValue>? _outputPort = null;
 
     public INode SetPort(string portName, IConnection connection)
     {
         var result = portName switch
         {
-            "INA" => NodeExtensions.TryAttach(ref inputPortA, connection),
-            "INB" => NodeExtensions.TryAttach(ref inputPortB, connection),
-            "OUT" => NodeExtensions.TryAttach(ref outputPort, connection),
+            "INA" => NodeExtensions.TryAttach(ref _inputPortA, connection),
+            "INB" => NodeExtensions.TryAttach(ref _inputPortB, connection),
+            "OUT" => NodeExtensions.TryAttach(ref _outputPort, connection),
             _ => throw new InvalidOperationException($"Port {portName} is invalid"),
         };
 
@@ -27,29 +27,29 @@ public class XorGate : INode
 
     public IEnumerator Execute()
     {
-        if (inputPortA is null)
+        if (_inputPortA is null)
             throw new InvalidOperationException("Input port A is not set");
 
-        if (inputPortB is null)
+        if (_inputPortB is null)
             throw new InvalidOperationException("Input port B is not set");
 
         while (true)
         {
-            if ((inputPortA.IsClosed && !inputPortA.HasData) ||
-                (inputPortB.IsClosed && !inputPortB.HasData))
+            if ((_inputPortA.IsClosed && !_inputPortA.HasData) ||
+                (_inputPortB.IsClosed && !_inputPortB.HasData))
                 break;
 
-            if (!inputPortA.HasData || !inputPortB.HasData)
+            if (!_inputPortA.HasData || !_inputPortB.HasData)
             {
                 yield return null;
                 continue;
             }
 
-            var a = inputPortA.Receive();
-            var b = inputPortB.Receive();
-            outputPort?.Send(a != b ? LogicValue.True : LogicValue.False);
+            var a = _inputPortA.Receive();
+            var b = _inputPortB.Receive();
+            _outputPort?.Send(a != b ? LogicValue.True : LogicValue.False);
         }
 
-        outputPort?.Close();
+        _outputPort?.Close();
     }
 }

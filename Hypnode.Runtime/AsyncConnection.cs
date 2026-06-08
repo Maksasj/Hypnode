@@ -4,25 +4,25 @@ namespace Hypnode.Runtime;
 
 public class QueueConnection<T> : Connection<T>
 {
-    private readonly Queue<T> buffer = new();
-    private bool closed = false;
+    private readonly Queue<T> _buffer = new();
+    private bool _closed = false;
 
-    public override bool HasData => buffer.Count > 0;
-    public override bool IsClosed => closed;
+    public override bool HasData => _buffer.Count > 0;
+    public override bool IsClosed => _closed;
 
     public override T Receive()
     {
-        if (buffer.Count == 0)
+        if (_buffer.Count == 0)
             throw new InvalidOperationException("No data available in connection");
 
-        return buffer.Dequeue();
+        return _buffer.Dequeue();
     }
 
     public override bool TryReceive(out T packet)
     {
-        if (buffer.Count > 0)
+        if (_buffer.Count > 0)
         {
-            packet = buffer.Dequeue();
+            packet = _buffer.Dequeue();
             return true;
         }
 
@@ -32,11 +32,11 @@ public class QueueConnection<T> : Connection<T>
 
     public override void Send(T packet)
     {
-        if (closed)
-            throw new InvalidOperationException("Cannot send to a closed connection");
+        if (_closed)
+            throw new InvalidOperationException("Cannot send to a _closed connection");
 
-        buffer.Enqueue(packet);
+        _buffer.Enqueue(packet);
     }
 
-    public override void Close() => closed = true;
+    public override void Close() => _closed = true;
 }

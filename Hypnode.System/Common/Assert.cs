@@ -5,31 +5,31 @@ namespace Hypnode.System.IO;
 
 public class Assert : INode
 {
-    private Connection<bool>? inputPort = null;
+    private Connection<bool>? _inputPort = null;
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == "IN" && connection is Connection<bool> con) inputPort = con;
+        if (portName == "IN" && connection is Connection<bool> con) _inputPort = con;
         return this;
     }
 
     public IEnumerator Execute()
     {
-        if (inputPort is null)
+        if (_inputPort is null)
             throw new InvalidOperationException("Input port is not set");
 
         while (true)
         {
-            if (inputPort.IsClosed && !inputPort.HasData)
+            if (_inputPort.IsClosed && !_inputPort.HasData)
                 break;
 
-            if (!inputPort.HasData)
+            if (!_inputPort.HasData)
             {
                 yield return null;
                 continue;
             }
 
-            if (!inputPort.Receive())
+            if (!_inputPort.Receive())
                 throw new InvalidOperationException("Assertion failed");
         }
     }

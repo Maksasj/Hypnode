@@ -6,43 +6,43 @@ using System.Collections;
 
 namespace Hypnode.Logic.Compound;
 
-public class FullAdderByte(INodeGraph nodeGraph) : ICompoundNode(nodeGraph)
+public class FullAdderByte(INodeGraph nodeGraph) : CompoundNode(nodeGraph)
 {
-    private Connection<byte>? aPort = null;
-    private Connection<byte>? bPort = null;
-    private Connection<byte>? sum = null;
+    private Connection<byte>? _aPort = null;
+    private Connection<byte>? _bPort = null;
+    private Connection<byte>? _sum = null;
 
     public override INode SetPort(string portName, IConnection connection)
     {
-        if (portName == "INA" && connection is Connection<byte> conn0) aPort = conn0;
-        if (portName == "INB" && connection is Connection<byte> conn1) bPort = conn1;
-        if (portName == "OUTSUM" && connection is Connection<byte> conn2) sum = conn2;
+        if (portName == "INA" && connection is Connection<byte> conn0) _aPort = conn0;
+        if (portName == "INB" && connection is Connection<byte> conn1) _bPort = conn1;
+        if (portName == "OUTSUM" && connection is Connection<byte> conn2) _sum = conn2;
 
         return this;
     }
 
     public override IEnumerator Execute()
     {
-        if (aPort is null)
+        if (_aPort is null)
             throw new InvalidOperationException("Input port A is not set");
 
-        if (bPort is null)
+        if (_bPort is null)
             throw new InvalidOperationException("Input port B is not set");
 
         while (true)
         {
-            if ((aPort.IsClosed && !aPort.HasData) ||
-                (bPort.IsClosed && !bPort.HasData))
+            if ((_aPort.IsClosed && !_aPort.HasData) ||
+                (_bPort.IsClosed && !_bPort.HasData))
                 break;
 
-            if (!aPort.HasData || !bPort.HasData)
+            if (!_aPort.HasData || !_bPort.HasData)
             {
                 yield return null;
                 continue;
             }
 
-            var a = aPort.Receive();
-            var b = bPort.Receive();
+            var a = _aPort.Receive();
+            var b = _bPort.Receive();
 
             var graph = new CoroutineNodeGraph();
             var aIn = graph.CreateConnection<byte>();
@@ -96,9 +96,9 @@ public class FullAdderByte(INodeGraph nodeGraph) : ICompoundNode(nodeGraph)
 
             yield return graph;
 
-            sum?.Send(result.GetValue());
+            _sum?.Send(result.GetValue());
         }
 
-        sum?.Close();
+        _sum?.Close();
     }
 }

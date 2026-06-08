@@ -5,11 +5,11 @@ namespace Hypnode.System.Common;
 
 public class VoidSink<T> : INode
 {
-    private readonly List<Connection<T>> inputPorts = [];
+    private readonly List<Connection<T>> _inputPorts = [];
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (connection is Connection<T> conn) inputPorts.Add(conn);
+        if (connection is Connection<T> conn) _inputPorts.Add(conn);
         return this;
     }
 
@@ -19,7 +19,7 @@ public class VoidSink<T> : INode
         do
         {
             anyReceived = false;
-            foreach (var conn in inputPorts)
+            foreach (var conn in _inputPorts)
             {
                 while (conn.TryReceive(out _))
                     anyReceived = true;
