@@ -9,37 +9,24 @@ namespace Hypnode.UnitTests.Logic.Gates;
 public abstract class NotGateTests<TGraph> where TGraph : INodeGraph, new()
 {
     [TestCase(LogicValue.False, LogicValue.True)]
-    [TestCase(LogicValue.True, LogicValue.False)]
-    public void TestNot_CorrectValue(LogicValue value, LogicValue expect)
+    [TestCase(LogicValue.True,  LogicValue.False)]
+    public void TestNot_CorrectValue(LogicValue value, LogicValue expected)
     {
         var graph = new TGraph();
-        var connection1 = graph.CreateConnection<LogicValue>();
-        var connection2 = graph.CreateConnection<LogicValue>();
+        var connIn  = graph.CreateConnection<LogicValue>();
+        var connOut = graph.CreateConnection<LogicValue>();
 
-        graph.AddNode(new PulseValue<LogicValue>(value))
-            .SetPort(Ports.Output, connection1);
-
-        graph.AddNode(new NotGate())
-            .SetPort(Ports.Input, connection1)
-            .SetPort(Ports.Output, connection2);
+        graph.AddNode(new PulseValue<LogicValue>(value)).SetPort(Ports.Output, connIn);
+        graph.AddNode(new NotGate()).SetPort(Ports.Input, connIn).SetPort(Ports.Output, connOut);
 
         var result = new Register<LogicValue>();
-        graph.AddNode(result).SetPort(Ports.Input, connection2);
+        graph.AddNode(result).SetPort(Ports.Input, connOut);
 
         graph.Evaluate();
 
-        Assert.That(result.GetValue(), Is.EqualTo(expect));
+        Assert.That(result.GetValue(), Is.EqualTo(expected));
     }
 }
 
-[TestFixture]
-public class AsyncNodeGrap_NotGateTests : NotGateTests<CoroutineNodeGraph>
-{
-
-}
-
-[TestFixture]
-public class SequenceNodeGraph_NotGateTests : NotGateTests<SequenceNodeGraph>
-{
-
-}
+[TestFixture] public class CoroutineNodeGraph_NotGateTests : NotGateTests<CoroutineNodeGraph> { }
+[TestFixture] public class SequenceNodeGraph_NotGateTests  : NotGateTests<SequenceNodeGraph>  { }

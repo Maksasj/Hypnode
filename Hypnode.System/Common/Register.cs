@@ -5,14 +5,12 @@ namespace Hypnode.System.Common;
 
 public class Register<T> : INode
 {
-    public const string Input = "IN";
-
     private T? _value;
     private Connection<T>? _inputPort = null;
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Input && connection is Connection<T> con) _inputPort = con;
+        if (portName == Ports.Input && connection is Connection<T> con) _inputPort = con;
         return this;
     }
 

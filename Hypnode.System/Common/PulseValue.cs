@@ -5,8 +5,6 @@ namespace Hypnode.System.Common;
 
 public class PulseValue<T> : INode
 {
-    public const string Output = "OUT";
-
     private T Value { get; set; }
     private Connection<T>? _outputPort = null;
 
@@ -14,7 +12,7 @@ public class PulseValue<T> : INode
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Output && connection is Connection<T> con) _outputPort = con;
+        if (portName == Ports.Output && connection is Connection<T> con) _outputPort = con;
         return this;
     }
 

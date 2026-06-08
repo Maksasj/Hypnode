@@ -5,13 +5,11 @@ namespace Hypnode.System.IO;
 
 public class Assert : INode
 {
-    public const string Input = "IN";
-
     private Connection<bool>? _inputPort = null;
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Input && connection is Connection<bool> con) _inputPort = con;
+        if (portName == Ports.Input && connection is Connection<bool> con) _inputPort = con;
         return this;
     }
 

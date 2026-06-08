@@ -12,11 +12,9 @@ public abstract class MultiPulseTests<TGraph> where TGraph : INodeGraph, new()
     [TestCase(LogicValue.True)]
     public void TestMultiPulse_SingleElement_CorrectValue(LogicValue value)
     {
-        var graph = new TGraph();
-
+        var graph      = new TGraph();
         var multiPulse = graph.AddNode(new MultiPulseValue<LogicValue>([value]));
-        var result = graph.AddNode(new Register<LogicValue>());
-
+        var result     = graph.AddNode(new Register<LogicValue>());
         graph.AddConnection<LogicValue>(multiPulse, Ports.Output, result, Ports.Input);
 
         graph.Evaluate();
@@ -30,28 +28,17 @@ public abstract class MultiPulseTests<TGraph> where TGraph : INodeGraph, new()
     [TestCase(-100)]
     public void TestMultiPulse_SingleElement_SendCloseExecuteOnce(int value)
     {
-        var graph = new TGraph();
-
+        var graph      = new TGraph();
         var connection = new Mock<Connection<int>>();
         var multiPulse = graph.AddNode(new MultiPulseValue<int>([value]));
-
         multiPulse.SetPort(Ports.Output, connection.Object);
 
         graph.Evaluate();
 
         connection.Verify(c => c.Send(value), Times.Once);
-        connection.Verify(c => c.Close(), Times.Once);
+        connection.Verify(c => c.Close(),     Times.Once);
     }
 }
 
-[TestFixture]
-public class CoroutineNodeGraph_MultiPulseTests : MultiPulseTests<CoroutineNodeGraph>
-{
-
-}
-
-[TestFixture]
-public class SequenceNodeGraph_MultiPulseTests : MultiPulseTests<SequenceNodeGraph>
-{
-
-}
+[TestFixture] public class CoroutineNodeGraph_MultiPulseTests : MultiPulseTests<CoroutineNodeGraph> { }
+[TestFixture] public class SequenceNodeGraph_MultiPulseTests  : MultiPulseTests<SequenceNodeGraph>  { }

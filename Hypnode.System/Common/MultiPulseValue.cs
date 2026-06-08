@@ -5,8 +5,6 @@ namespace Hypnode.System.Common;
 
 public class MultiPulseValue<T> : INode
 {
-    public const string Output = "OUT";
-
     private IEnumerable<T> Value { get; set; }
     private Connection<T>? _outputPort = null;
 
@@ -14,7 +12,7 @@ public class MultiPulseValue<T> : INode
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Output && connection is Connection<T> con) _outputPort = con;
+        if (portName == Ports.Output && connection is Connection<T> con) _outputPort = con;
         return this;
     }
 
@@ -22,7 +20,6 @@ public class MultiPulseValue<T> : INode
     {
         foreach (var item in Value)
             _outputPort?.Send(item);
-
         _outputPort?.Close();
         yield break;
     }

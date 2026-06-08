@@ -5,16 +5,21 @@ namespace Hypnode.Logic.Gates;
 
 public class NotGate : INode
 {
-    public const string Input = "IN";
-    public const string Output = "OUT";
-
     private Connection<LogicValue>? _inputPort = null;
     private Connection<LogicValue>? _outputPort = null;
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Input && connection is Connection<LogicValue> con0) _inputPort = con0;
-        if (portName == Output && connection is Connection<LogicValue> con1) _outputPort = con1;
+        var result = portName switch
+        {
+            Ports.Input  => NodeExtensions.TryAttach(ref _inputPort, connection),
+            Ports.Output => NodeExtensions.TryAttach(ref _outputPort, connection),
+            _ => throw new InvalidOperationException($"Unknown port '{portName}'"),
+        };
+
+        if (!result)
+            throw new InvalidOperationException($"Port '{portName}' is already set or type mismatch");
+
         return this;
     }
 
@@ -26,9 +31,7 @@ public class NotGate : INode
         {
             if (_inputPort.IsClosed && !_inputPort.HasData) break;
             if (!_inputPort.HasData) { yield return null; continue; }
-
-            var packet = _inputPort.Receive();
-            _outputPort?.Send(packet == LogicValue.True ? LogicValue.False : LogicValue.True);
+            _outputPort?.Send(_inputPort.Receive() == LogicValue.True ? LogicValue.False : LogicValue.True);
         }
 
         _outputPort?.Close();

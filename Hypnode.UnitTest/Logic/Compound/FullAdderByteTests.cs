@@ -1,6 +1,5 @@
 using Hypnode.Core;
 using Hypnode.Logic.Compound;
-using Hypnode.Logic.Gates;
 using Hypnode.Runtime;
 using Hypnode.System.Common;
 
@@ -19,38 +18,29 @@ public abstract class FullAdderByteTests<TGraph> where TGraph : INodeGraph, new(
     [TestCase(0b11111010, 0b00000101)]
     [TestCase(0b00000000, 0b11111111)]
     [TestCase(0b11111111, 0b00000000)]
-    public void TestAdderByteCompound_CorrectValues(byte a, byte b)
+    public void TestFullAdderByte_CorrectValues(byte a, byte b)
     {
-        var graph = new TGraph();
-        var ain = graph.CreateConnection<byte>();
-        var bin = graph.CreateConnection<byte>();
-        var outsum = graph.CreateConnection<byte>();
+        var graph  = new TGraph();
+        var ain    = graph.CreateConnection<byte>();
+        var bin    = graph.CreateConnection<byte>();
+        var outSum = graph.CreateConnection<byte>();
 
         graph.AddNode(new PulseValue<byte>(a)).SetPort(Ports.Output, ain);
         graph.AddNode(new PulseValue<byte>(b)).SetPort(Ports.Output, bin);
 
         graph.AddNode(new FullAdderByte(new TGraph()))
-            .SetPort(AndGate.InputA, ain)
-            .SetPort(AndGate.InputB, bin)
-            .SetPort(FullAdder.OutputSum, outsum);
+            .SetPort(FullAdderByte.InputA,    ain)
+            .SetPort(FullAdderByte.InputB,    bin)
+            .SetPort(FullAdderByte.OutputSum, outSum);
 
         var sumCell = new Register<byte>();
-        graph.AddNode(sumCell).SetPort(Ports.Input, outsum);
+        graph.AddNode(sumCell).SetPort(Ports.Input, outSum);
 
         graph.Evaluate();
 
-        Assert.That(sumCell.GetValue(), Is.EqualTo(a + b));
+        Assert.That(sumCell.GetValue(), Is.EqualTo((byte)(a + b)));
     }
 }
 
-[TestFixture]
-public class AsyncNodeGrap_FullAdderByteTests : FullAdderByteTests<CoroutineNodeGraph>
-{
-
-}
-
-[TestFixture]
-public class SequenceNodeGraph_FullAdderByteTests : FullAdderByteTests<SequenceNodeGraph>
-{
-
-}
+[TestFixture] public class CoroutineNodeGraph_FullAdderByteTests : FullAdderByteTests<CoroutineNodeGraph> { }
+[TestFixture] public class SequenceNodeGraph_FullAdderByteTests  : FullAdderByteTests<SequenceNodeGraph>  { }

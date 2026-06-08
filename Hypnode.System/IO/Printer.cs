@@ -5,13 +5,11 @@ namespace Hypnode.System.IO;
 
 public class Printer<T> : INode
 {
-    public const string Input = "IN";
-
     private Connection<T>? _inputPort = null;
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Input && connection is Connection<T> conn) _inputPort = conn;
+        if (portName == Ports.Input && connection is Connection<T> conn) _inputPort = conn;
         return this;
     }
 

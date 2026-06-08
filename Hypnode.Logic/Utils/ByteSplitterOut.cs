@@ -5,14 +5,12 @@ namespace Hypnode.Logic.Utils;
 
 public class ByteSplitterOut : INode
 {
-    public const string Output = "OUT";
-
     private readonly Connection<LogicValue>[] _inputPorts = new Connection<LogicValue>[8];
     private Connection<byte>? _outputPort = null;
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Output && connection is Connection<byte> connOut)
+        if (portName == Ports.Output && connection is Connection<byte> connOut)
             _outputPort = connOut;
 
         if (int.TryParse(portName, out int idx) && idx >= 0 && idx < 8
@@ -30,15 +28,17 @@ public class ByteSplitterOut : INode
 
         while (true)
         {
-            bool anyExhausted = Enumerable.Range(0, 8).Any(i => _inputPorts[i].IsClosed && !_inputPorts[i].HasData);
-            if (anyExhausted) break;
+            if (Enumerable.Range(0, 8).Any(i => _inputPorts[i].IsClosed && !_inputPorts[i].HasData))
+                break;
 
-            bool allReady = Enumerable.Range(0, 8).All(i => _inputPorts[i].HasData);
-            if (!allReady) { yield return null; continue; }
+            if (!Enumerable.Range(0, 8).All(i => _inputPorts[i].HasData))
+            {
+                yield return null;
+                continue;
+            }
 
             var values = new LogicValue[8];
-            for (int i = 0; i < 8; i++)
-                values[i] = _inputPorts[i].Receive();
+            for (int i = 0; i < 8; i++) values[i] = _inputPorts[i].Receive();
 
             byte result = (byte)Enumerable.Range(0, 8)
                 .Select(i => values[i] == LogicValue.True ? (1 << i) : 0)

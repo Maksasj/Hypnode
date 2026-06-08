@@ -17,14 +17,13 @@ public abstract class SquarerTests<TGraph> where TGraph : INodeGraph, new()
     [TestCase(-25)]
     public void TestSquarer_CorrectValue(int value)
     {
-        var graph = new TGraph();
-
-        var pulse = graph.AddNode(new PulseValue<int>(value));
+        var graph   = new TGraph();
+        var pulse   = graph.AddNode(new PulseValue<int>(value));
         var squarer = graph.AddNode(new Squarer());
-        var result = graph.AddNode(new Register<int>());
+        var result  = graph.AddNode(new Register<int>());
 
-        graph.AddConnection<int>(pulse, Ports.Output, squarer, Ports.Input);
-        graph.AddConnection<int>(squarer, Ports.Output, result, Ports.Input);
+        graph.AddConnection<int>(pulse,   Ports.Output, squarer, Ports.Input);
+        graph.AddConnection<int>(squarer, Ports.Output, result,  Ports.Input);
 
         graph.Evaluate();
 
@@ -32,14 +31,5 @@ public abstract class SquarerTests<TGraph> where TGraph : INodeGraph, new()
     }
 }
 
-[TestFixture]
-public class CoroutineNodeGraph_SquarerTests : SquarerTests<CoroutineNodeGraph>
-{
-
-}
-
-[TestFixture]
-public class SequenceNodeGraph_SquarerTests : SquarerTests<SequenceNodeGraph>
-{
-
-}
+[TestFixture] public class CoroutineNodeGraph_SquarerTests : SquarerTests<CoroutineNodeGraph> { }
+[TestFixture] public class SequenceNodeGraph_SquarerTests  : SquarerTests<SequenceNodeGraph>  { }
