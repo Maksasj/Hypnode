@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36429.23
+# Visual Studio Version 18
+VisualStudioVersion = 18.7.11822.327 insiders
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hypnode.Core", "Hypnode.Core\Hypnode.Core.csproj", "{02BCA232-A754-446A-9339-3B9D6C541941}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hypnode.Logic", "Hypnode.Logic\Hypnode.Logic.csproj", "{8C4462BA-F0F4-44CF-B4D3-8581E850B8F3}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hypnode.System", "Hypnode.System\Hypnode.System.csproj", "{613F0340-6ADD-4445-BD12-5EE48FAF7F02}"
 EndProject
@@ -23,10 +21,6 @@ Global
 		{02BCA232-A754-446A-9339-3B9D6C541941}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{02BCA232-A754-446A-9339-3B9D6C541941}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{02BCA232-A754-446A-9339-3B9D6C541941}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8C4462BA-F0F4-44CF-B4D3-8581E850B8F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8C4462BA-F0F4-44CF-B4D3-8581E850B8F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8C4462BA-F0F4-44CF-B4D3-8581E850B8F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8C4462BA-F0F4-44CF-B4D3-8581E850B8F3}.Release|Any CPU.Build.0 = Release|Any CPU
 		{613F0340-6ADD-4445-BD12-5EE48FAF7F02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{613F0340-6ADD-4445-BD12-5EE48FAF7F02}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{613F0340-6ADD-4445-BD12-5EE48FAF7F02}.Release|Any CPU.ActiveCfg = Release|Any CPU
