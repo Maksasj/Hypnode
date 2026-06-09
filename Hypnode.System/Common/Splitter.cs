@@ -1,18 +1,17 @@
 using Hypnode.Core;
-using Hypnode.Core.Types;
 using System.Collections;
 
 namespace Hypnode.System.Common;
 
 public class Splitter : INode
 {
-    private Connection<HypnodeValue>? _inputPort;
-    private readonly List<Connection<HypnodeValue>> _outputPorts = [];
+    private Connection? _inputPort;
+    private readonly List<Connection> _outputPorts = [];
 
     public INode SetPort(string portName, IConnection connection)
     {
         if (portName == Ports.Input) NodeExtensions.TryAttach(ref _inputPort, connection);
-        if (portName == Ports.Output && connection is Connection<HypnodeValue> con) _outputPorts.Add(con);
+        if (portName == Ports.Output && connection is Connection con) _outputPorts.Add(con);
         return this;
     }
 

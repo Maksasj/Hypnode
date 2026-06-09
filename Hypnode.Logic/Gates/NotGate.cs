@@ -1,6 +1,5 @@
 using Hypnode.Core;
 using Hypnode.Core.Modules;
-using Hypnode.Core.Types;
 using System.Collections;
 
 namespace Hypnode.Logic.Gates;
@@ -8,14 +7,14 @@ namespace Hypnode.Logic.Gates;
 [HypnodeNode("not-gate", "Logical NOT of one LogicValue input")]
 public class NotGate : INode
 {
-    private Connection<HypnodeValue>? _inputPort;
-    private Connection<HypnodeValue>? _outputPort;
+    private Connection? _inputPort;
+    private Connection? _outputPort;
 
     public INode SetPort(string portName, IConnection connection)
     {
         var result = portName switch
         {
-            Ports.Input  => NodeExtensions.TryAttach(ref _inputPort, connection),
+            Ports.Input => NodeExtensions.TryAttach(ref _inputPort, connection),
             Ports.Output => NodeExtensions.TryAttach(ref _outputPort, connection),
             _ => throw new InvalidOperationException($"Unknown port '{portName}'"),
         };

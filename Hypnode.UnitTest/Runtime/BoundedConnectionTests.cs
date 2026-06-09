@@ -12,23 +12,23 @@ public class BoundedConnectionTests
     [Test]
     public void TestBoundedConnection_WithinCapacity_SendsAndReceives()
     {
-        var conn = new BoundedQueueConnection<int>(3);
-        conn.Send(1);
-        conn.Send(2);
+        var conn = new BoundedQueueConnection(3);
+        conn.Send(new IntValue(1));
+        conn.Send(new IntValue(2));
 
         Assert.That(conn.HasData, Is.True);
         Assert.That(conn.IsFull, Is.False);
-        Assert.That(conn.Receive(), Is.EqualTo(1));
-        Assert.That(conn.Receive(), Is.EqualTo(2));
+        Assert.That(conn.Receive(), Is.EqualTo(new IntValue(1)));
+        Assert.That(conn.Receive(), Is.EqualTo(new IntValue(2)));
         Assert.That(conn.HasData, Is.False);
     }
 
     [Test]
     public void TestBoundedConnection_AtCapacity_IsFullTrue()
     {
-        var conn = new BoundedQueueConnection<int>(2);
-        conn.Send(1);
-        conn.Send(2);
+        var conn = new BoundedQueueConnection(2);
+        conn.Send(new IntValue(1));
+        conn.Send(new IntValue(2));
 
         Assert.That(conn.IsFull, Is.True);
     }
@@ -36,23 +36,23 @@ public class BoundedConnectionTests
     [Test]
     public void TestBoundedConnection_Overflow_Throws()
     {
-        var conn = new BoundedQueueConnection<int>(1);
-        conn.Send(42);
+        var conn = new BoundedQueueConnection(1);
+        conn.Send(new IntValue(42));
 
-        Assert.Throws<InvalidOperationException>(() => conn.Send(99));
+        Assert.Throws<InvalidOperationException>(() => conn.Send(new IntValue(99)));
     }
 
     [Test]
     public void TestBoundedConnection_ZeroCapacity_Throws()
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new BoundedQueueConnection<int>(0));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new BoundedQueueConnection(0));
     }
 
     [Test]
     public void TestBoundedConnection_AfterReceive_IsFullFalse()
     {
-        var conn = new BoundedQueueConnection<int>(1);
-        conn.Send(10);
+        var conn = new BoundedQueueConnection(1);
+        conn.Send(new IntValue(10));
         Assert.That(conn.IsFull, Is.True);
 
         conn.Receive();
@@ -76,9 +76,9 @@ public class BoundedConnectionTests
     [Test]
     public void TestBoundedConnection_UnboundedDefaultIsFull_AlwaysFalse()
     {
-        var conn = new QueueConnection<int>();
+        var conn = new QueueConnection();
         Assert.That(conn.IsFull, Is.False);
-        for (int i = 0; i < 1000; i++) conn.Send(i);
+        for (int i = 0; i < 1000; i++) conn.Send(new IntValue(i));
         Assert.That(conn.IsFull, Is.False);
     }
 }

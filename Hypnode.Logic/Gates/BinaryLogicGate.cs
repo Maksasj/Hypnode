@@ -1,5 +1,4 @@
 using Hypnode.Core;
-using Hypnode.Core.Types;
 using System.Collections;
 
 namespace Hypnode.Logic.Gates;
@@ -10,9 +9,9 @@ public abstract class BinaryLogicGate : INode
     public const string InputB = "INB";
     public const string Output = "OUT";
 
-    private Connection<HypnodeValue>? _inputPortA;
-    private Connection<HypnodeValue>? _inputPortB;
-    private Connection<HypnodeValue>? _outputPort;
+    private Connection? _inputPortA;
+    private Connection? _inputPortB;
+    private Connection? _outputPort;
 
     protected abstract LogicValue Compute(LogicValue a, LogicValue b);
 

@@ -11,11 +11,11 @@ public static class HypnodeValueParser
         {
             HypnodeType.Primitive p => p.Name switch
             {
-                "int"    => new IntValue(int.Parse(valueStr)),
-                "float"  => new FloatValue(float.Parse(valueStr)),
+                "int" => new IntValue(int.Parse(valueStr)),
+                "float" => new FloatValue(float.Parse(valueStr)),
                 "double" => new DoubleValue(double.Parse(valueStr)),
-                "bool"   => new BoolValue(bool.Parse(valueStr)),
-                "byte"   => new ByteValue(byte.Parse(valueStr)),
+                "bool" => new BoolValue(bool.Parse(valueStr)),
+                "byte" => new ByteValue(byte.Parse(valueStr)),
                 "string" => new StringValue(valueStr),
                 _ => throw new InvalidOperationException($"No parser registered for primitive type '{p.Name}'"),
             },

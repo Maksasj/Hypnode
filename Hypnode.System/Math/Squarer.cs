@@ -8,8 +8,8 @@ namespace Hypnode.System.Math;
 [HypnodeNode("squarer", "Squares each incoming int packet")]
 public class Squarer : INode
 {
-    private Connection<HypnodeValue>? _inputPort;
-    private Connection<HypnodeValue>? _outputPort;
+    private Connection? _inputPort;
+    private Connection? _outputPort;
 
     public INode SetPort(string portName, IConnection connection)
     {

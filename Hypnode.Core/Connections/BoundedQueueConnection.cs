@@ -1,8 +1,10 @@
+using Hypnode.Core.Types;
+
 namespace Hypnode.Core.Connections;
 
-public class BoundedQueueConnection<T> : Connection<T>
+public class BoundedQueueConnection : Connection
 {
-    private readonly Queue<T> _buffer = new();
+    private readonly Queue<HypnodeValue> _buffer = new();
     private readonly int _capacity;
     private bool _closed = false;
     private bool _hadActivity = false;
@@ -18,7 +20,7 @@ public class BoundedQueueConnection<T> : Connection<T>
     public override bool HadActivity => _hadActivity;
     public override bool IsFull => _buffer.Count >= _capacity;
 
-    public override void Send(T packet)
+    public override void Send(HypnodeValue packet)
     {
         if (_closed) throw new InvalidOperationException("Cannot send to a closed connection");
         if (_buffer.Count >= _capacity) throw new InvalidOperationException($"Connection is full (capacity {_capacity})");
@@ -26,13 +28,13 @@ public class BoundedQueueConnection<T> : Connection<T>
         _buffer.Enqueue(packet);
     }
 
-    public override T Receive()
+    public override HypnodeValue Receive()
     {
         if (_buffer.Count == 0) throw new InvalidOperationException("No data available in connection");
         return _buffer.Dequeue();
     }
 
-    public override bool TryReceive(out T packet)
+    public override bool TryReceive(out HypnodeValue packet)
     {
         if (_buffer.Count > 0) { packet = _buffer.Dequeue(); return true; }
         packet = default!;

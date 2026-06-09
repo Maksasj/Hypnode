@@ -7,7 +7,7 @@ namespace Hypnode.System.Common;
 public class MultiPulseValue : INode
 {
     private readonly IEnumerable<HypnodeValue> _values;
-    private Connection<HypnodeValue>? _outputPort;
+    private Connection? _outputPort;
 
     public MultiPulseValue(IEnumerable<HypnodeValue> values) => _values = values;
 

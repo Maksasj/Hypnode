@@ -10,9 +10,9 @@ public class IfNode : INode
     public const string Else = "ELSE";
 
     private readonly Func<HypnodeValue, bool> _predicate;
-    private Connection<HypnodeValue>? _inputPort;
-    private Connection<HypnodeValue>? _thenPort;
-    private Connection<HypnodeValue>? _elsePort;
+    private Connection? _inputPort;
+    private Connection? _thenPort;
+    private Connection? _elsePort;
 
     public IfNode(Func<HypnodeValue, bool> predicate) => _predicate = predicate;
 

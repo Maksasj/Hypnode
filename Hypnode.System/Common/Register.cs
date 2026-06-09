@@ -7,7 +7,7 @@ namespace Hypnode.System.Common;
 public class Register : INode
 {
     private HypnodeValue? _value;
-    private Connection<HypnodeValue>? _inputPort;
+    private Connection? _inputPort;
 
     public HypnodeValue? GetValue() => _value;
 

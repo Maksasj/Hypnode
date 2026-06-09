@@ -8,8 +8,8 @@ namespace Hypnode.Logic.Utils;
 [HypnodeNode("byte-splitter-out", "Assembles 8 LogicValue bits into a byte (0..7 → OUT)")]
 public class ByteSplitterOut : INode
 {
-    private readonly Connection<HypnodeValue>?[] _inputPorts = new Connection<HypnodeValue>?[8];
-    private Connection<HypnodeValue>? _outputPort;
+    private readonly Connection?[] _inputPorts = new Connection?[8];
+    private Connection? _outputPort;
 
     public INode SetPort(string portName, IConnection connection)
     {
@@ -17,7 +17,7 @@ public class ByteSplitterOut : INode
             NodeExtensions.TryAttach(ref _outputPort, connection);
 
         if (int.TryParse(portName, out int idx) && idx >= 0 && idx < 8
-            && connection is Connection<HypnodeValue> connBit)
+            && connection is Connection connBit)
             _inputPorts[idx] = connBit;
 
         return this;

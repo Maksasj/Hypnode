@@ -1,5 +1,4 @@
 using Hypnode.Core.Modules;
-using Hypnode.Core.Types;
 using System.Reflection;
 
 namespace Hypnode.Core.Graph;
@@ -11,11 +10,11 @@ public class NodeFactory
 
     private readonly Dictionary<string, Func<INodeGraph, IConnection>> _connectionCreators = new()
     {
-        ["int"]    = g => g.CreateConnection(),
+        ["int"] = g => g.CreateConnection(),
         ["string"] = g => g.CreateConnection(),
-        ["bool"]   = g => g.CreateConnection(),
-        ["byte"]   = g => g.CreateConnection(),
-        ["float"]  = g => g.CreateConnection(),
+        ["bool"] = g => g.CreateConnection(),
+        ["byte"] = g => g.CreateConnection(),
+        ["float"] = g => g.CreateConnection(),
         ["double"] = g => g.CreateConnection(),
     };
 

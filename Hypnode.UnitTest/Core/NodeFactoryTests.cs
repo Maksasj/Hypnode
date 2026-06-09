@@ -16,7 +16,6 @@ public class NodeFactoryTests
         factory.Register("multi", p => new MultiPulseValue(p["values"].Split(',').Select(v => (HypnodeValue)new IntValue(int.Parse(v)))));
         factory.Register("register", () => new Register());
         factory.Register("squarer", () => new Squarer());
-        factory.Register("fold-sum", () => new FoldNode(new IntValue(0), (acc, x) => new IntValue(acc.AsInt() + x.AsInt())));
         return factory;
     }
 
@@ -56,24 +55,6 @@ public class NodeFactoryTests
         def.Connect("mystery-type", "src", Ports.Output, "result", Ports.Input);
 
         Assert.Throws<InvalidOperationException>(() => BuildFactory().Build(def));
-    }
-
-    [Test]
-    public void TestFactory_MultiplePackets_FoldSum()
-    {
-        var def = new GraphDefinition();
-        def.AddNode("src", "multi", ("values", "1,2,3,4,5"));
-        def.AddNode("fold", "fold-sum");
-        def.AddNode("result", "register");
-        def.Connect("int", "src", Ports.Output, "fold", Ports.Input);
-        def.Connect("int", "fold", Ports.Output, "result", Ports.Input);
-
-        var graph = BuildFactory().Build(def);
-        var result = (Register)graph.Nodes[2];
-
-        graph.Evaluate();
-
-        Assert.That(result.GetValue()!.AsInt(), Is.EqualTo(15));
     }
 
     [Test]

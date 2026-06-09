@@ -32,7 +32,7 @@ public class PulseTests
     public void TestPulse_SendCloseExecuteOnce(int value)
     {
         var graph = new CoroutineNodeGraph();
-        var conn = new Mock<Connection<HypnodeValue>>();
+        var conn = new Mock<Connection>();
         graph.AddNode(new PulseValue(new IntValue(value))).SetPort(Ports.Output, conn.Object);
 
         graph.Evaluate();

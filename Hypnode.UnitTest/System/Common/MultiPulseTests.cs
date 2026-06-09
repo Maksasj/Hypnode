@@ -31,7 +31,7 @@ public class MultiPulseTests
     public void TestMultiPulse_SingleElement_SendCloseExecuteOnce(int value)
     {
         var graph = new CoroutineNodeGraph();
-        var conn = new Mock<Connection<HypnodeValue>>();
+        var conn = new Mock<Connection>();
         graph.AddNode(new MultiPulseValue([new IntValue(value)])).SetPort(Ports.Output, conn.Object);
 
         graph.Evaluate();

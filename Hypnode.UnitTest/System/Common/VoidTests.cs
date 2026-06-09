@@ -24,7 +24,7 @@ public class VoidTests
     public void TestVoid_SingleConnection_TryReceiveOnce()
     {
         var graph = new CoroutineNodeGraph();
-        var conn = new Mock<Connection<HypnodeValue>>();
+        var conn = new Mock<Connection>();
         conn.Setup(c => c.TryReceive(out It.Ref<HypnodeValue>.IsAny)).Returns(false);
         graph.AddNode(new VoidSink()).SetPort(VoidSink.Input, conn.Object);
 
@@ -43,7 +43,7 @@ public class VoidTests
         var sink = graph.AddNode(new VoidSink());
         var mocks = Enumerable.Range(0, count).Select(_ =>
         {
-            var m = new Mock<Connection<HypnodeValue>>();
+            var m = new Mock<Connection>();
             m.Setup(c => c.TryReceive(out It.Ref<HypnodeValue>.IsAny)).Returns(false);
             sink.SetPort(VoidSink.Input, m.Object);
             return m;

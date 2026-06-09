@@ -1,5 +1,4 @@
 using Hypnode.Core.Connections;
-using Hypnode.Core.Types;
 using System.Collections;
 
 namespace Hypnode.Core.Graph;
@@ -9,16 +8,16 @@ public class CoroutineNodeGraph : INodeGraph
     public List<INode> Nodes { get; set; } = [];
     public List<IConnection> Connections { get; set; } = [];
 
-    public Connection<HypnodeValue> CreateConnection()
+    public Connection CreateConnection()
     {
-        var connection = new QueueConnection<HypnodeValue>();
+        var connection = new QueueConnection();
         Connections.Add(connection);
         return connection;
     }
 
-    public Connection<HypnodeValue> CreateBoundedConnection(int capacity)
+    public Connection CreateBoundedConnection(int capacity)
     {
-        var connection = new BoundedQueueConnection<HypnodeValue>(capacity);
+        var connection = new BoundedQueueConnection(capacity);
         Connections.Add(connection);
         return connection;
     }

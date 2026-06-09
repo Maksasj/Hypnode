@@ -7,17 +7,12 @@
 -->
 <Graph>
   <Nodes>
-    <Node id="gen"   type="generator"  />
-    <Node id="count" type="fold-count" />
-    <Node id="print" type="printer"    />
+    <Node id="gen"   type="generator" />
+    <Node id="print" type="printer"   />
   </Nodes>
   <Connections>
     <Connection type="int">
       <From node="gen"   port="OUT" />
-      <To   node="count" port="IN"  />
-    </Connection>
-    <Connection type="int">
-      <From node="count" port="OUT" />
       <To   node="print" port="IN"  />
     </Connection>
   </Connections>

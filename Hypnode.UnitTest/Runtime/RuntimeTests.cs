@@ -77,39 +77,6 @@ public class RuntimeTests
     }
 
     [Test]
-    public void Multi_FoldSum_FinalValueIs15()
-    {
-        const string xml = """
-            <Graph>
-              <Nodes>
-                <Node id="src" type="multi">
-                  <Parameters>
-                    <Parameter name="type">int</Parameter>
-                    <Parameter name="values">1,2,3,4,5</Parameter>
-                  </Parameters>
-                </Node>
-                <Node id="fold" type="fold-sum" />
-                <Node id="out"  type="printer"  />
-              </Nodes>
-              <Connections>
-                <Connection type="int">
-                  <From node="src"  port="OUT" />
-                  <To   node="fold" port="IN"  />
-                </Connection>
-                <Connection type="int">
-                  <From node="fold" port="OUT" />
-                  <To   node="out"  port="IN"  />
-                </Connection>
-              </Connections>
-            </Graph>
-            """;
-
-        var output = CaptureOutput(() => new HypnodeRuntime().Run(xml));
-        var lines = output.Trim().Split('\n').Select(l => l.Trim()).ToArray();
-        Assert.That(lines.Last(), Is.EqualTo("15"));
-    }
-
-    [Test]
     public void Build_PulseToRegister_ValueAccessible()
     {
         const string xml = """

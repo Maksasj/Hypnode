@@ -7,7 +7,7 @@ namespace Hypnode.System.Common;
 public class PulseValue : INode
 {
     private readonly HypnodeValue _value;
-    private Connection<HypnodeValue>? _outputPort;
+    private Connection? _outputPort;
 
     public PulseValue(HypnodeValue value) => _value = value;
 

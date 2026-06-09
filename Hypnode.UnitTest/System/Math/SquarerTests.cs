@@ -20,9 +20,9 @@ public class SquarerTests
     public void TestSquarer_CorrectValue(int value)
     {
         var graph = new CoroutineNodeGraph();
-        var pulse   = graph.AddNode(new PulseValue(new IntValue(value)));
+        var pulse = graph.AddNode(new PulseValue(new IntValue(value)));
         var squarer = graph.AddNode(new Squarer());
-        var result  = graph.AddNode(new Register());
+        var result = graph.AddNode(new Register());
 
         graph.AddConnection(pulse, Ports.Output, squarer, Ports.Input);
         graph.AddConnection(squarer, Ports.Output, result, Ports.Input);

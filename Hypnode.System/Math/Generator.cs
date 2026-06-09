@@ -8,7 +8,7 @@ namespace Hypnode.System.Math;
 [HypnodeNode("generator", "Emits incrementing int packets indefinitely")]
 public class Generator : INode
 {
-    private Connection<HypnodeValue>? _outputPort;
+    private Connection? _outputPort;
 
     public INode SetPort(string portName, IConnection connection)
     {

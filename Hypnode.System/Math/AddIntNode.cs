@@ -11,9 +11,9 @@ public class AddIntNode : INode
     public const string Input1 = "IN1";
     public const string Input2 = "IN2";
 
-    private Connection<HypnodeValue>? _inputPort1;
-    private Connection<HypnodeValue>? _inputPort2;
-    private Connection<HypnodeValue>? _outputPort;
+    private Connection? _inputPort1;
+    private Connection? _inputPort2;
+    private Connection? _outputPort;
 
     public INode SetPort(string portName, IConnection connection)
     {

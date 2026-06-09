@@ -1,5 +1,4 @@
 using Hypnode.Core;
-using Hypnode.Core.Types;
 using System.Collections;
 
 namespace Hypnode.System.Common;
@@ -8,11 +7,11 @@ public class VoidSink : INode
 {
     public const string Input = "_";
 
-    private readonly List<Connection<HypnodeValue>> _inputPorts = [];
+    private readonly List<Connection> _inputPorts = [];
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Input && connection is Connection<HypnodeValue> conn)
+        if (portName == Input && connection is Connection conn)
             _inputPorts.Add(conn);
         return this;
     }

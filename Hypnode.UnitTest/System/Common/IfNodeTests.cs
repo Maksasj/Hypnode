@@ -60,8 +60,8 @@ public class IfNodeTests
     {
         var graph = new CoroutineNodeGraph();
         var connIn = graph.CreateConnection();
-        var connThen = new Mock<Connection<HypnodeValue>>();
-        var connElse = new Mock<Connection<HypnodeValue>>();
+        var connThen = new Mock<Connection>();
+        var connElse = new Mock<Connection>();
 
         graph.AddNode(new PulseValue(new IntValue(10))).SetPort(Ports.Output, connIn);
         graph.AddNode(new IfNode(v => v.AsInt() > 5))
@@ -91,19 +91,14 @@ public class IfNodeTests
             .SetPort(IfNode.Then, connThen)
             .SetPort(IfNode.Else, connElse);
 
-        var evenFold = graph.AddNode(new FoldNode(new IntValue(0), (acc, x) => new IntValue(acc.AsInt() + x.AsInt())));
-        var oddFold  = graph.AddNode(new FoldNode(new IntValue(0), (acc, x) => new IntValue(acc.AsInt() + x.AsInt())));
-        evenFold.SetPort(Ports.Input, connThen);
-        oddFold.SetPort(Ports.Input, connElse);
-
         var evenResult = graph.AddNode(new Register());
-        var oddResult  = graph.AddNode(new Register());
-        graph.AddConnection(evenFold, Ports.Output, evenResult, Ports.Input);
-        graph.AddConnection(oddFold,  Ports.Output, oddResult,  Ports.Input);
+        var oddResult = graph.AddNode(new Register());
+        evenResult.SetPort(Ports.Input, connThen);
+        oddResult.SetPort(Ports.Input, connElse);
 
         graph.Evaluate();
 
-        Assert.That(evenResult.GetValue()!.AsInt(), Is.EqualTo(12));
-        Assert.That(oddResult.GetValue()!.AsInt(),  Is.EqualTo(9));
+        Assert.That(evenResult.GetValue()!.AsInt(), Is.EqualTo(6));
+        Assert.That(oddResult.GetValue()!.AsInt(), Is.EqualTo(5));
     }
 }

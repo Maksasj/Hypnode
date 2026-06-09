@@ -1,6 +1,5 @@
 using Hypnode.Core;
 using Hypnode.Core.Modules;
-using Hypnode.Core.Types;
 using System.Collections;
 
 namespace Hypnode.System.IO;
@@ -8,7 +7,7 @@ namespace Hypnode.System.IO;
 [HypnodeNode("printer", "Prints each received value to stdout")]
 public class Printer : INode
 {
-    private Connection<HypnodeValue>? _inputPort;
+    private Connection? _inputPort;
 
     public INode SetPort(string portName, IConnection connection)
     {

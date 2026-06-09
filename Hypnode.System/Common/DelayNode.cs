@@ -11,8 +11,8 @@ namespace Hypnode.System.Common;
 public class DelayNode : INode
 {
     private HypnodeValue _current;
-    private Connection<HypnodeValue>? _inputPort;
-    private Connection<HypnodeValue>? _outputPort;
+    private Connection? _inputPort;
+    private Connection? _outputPort;
 
     public DelayNode(HypnodeValue initialValue) => _current = initialValue;
 

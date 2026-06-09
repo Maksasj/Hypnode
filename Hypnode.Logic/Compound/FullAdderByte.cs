@@ -11,20 +11,20 @@ namespace Hypnode.Logic.Compound;
 [HypnodeNode("full-adder-byte", "8-bit full adder (INA, INB → OUTSUM)")]
 public class FullAdderByte : INode
 {
-    public const string InputA    = "INA";
-    public const string InputB    = "INB";
+    public const string InputA = "INA";
+    public const string InputB = "INB";
     public const string OutputSum = "OUTSUM";
 
-    private Connection<HypnodeValue>? _aPort;
-    private Connection<HypnodeValue>? _bPort;
-    private Connection<HypnodeValue>? _sum;
+    private Connection? _aPort;
+    private Connection? _bPort;
+    private Connection? _sum;
 
     public INode SetPort(string portName, IConnection connection)
     {
         var result = portName switch
         {
-            InputA    => NodeExtensions.TryAttach(ref _aPort, connection),
-            InputB    => NodeExtensions.TryAttach(ref _bPort, connection),
+            InputA => NodeExtensions.TryAttach(ref _aPort, connection),
+            InputB => NodeExtensions.TryAttach(ref _bPort, connection),
             OutputSum => NodeExtensions.TryAttach(ref _sum, connection),
             _ => throw new InvalidOperationException($"Unknown port '{portName}'"),
         };
@@ -62,8 +62,8 @@ public class FullAdderByte : INode
             var aDemux = graph.AddNode(new ByteSplitterIn()).SetPort(Ports.Input, aIn);
             var bDemux = graph.AddNode(new ByteSplitterIn()).SetPort(Ports.Input, bIn);
 
-            Connection<HypnodeValue>? carry = null;
-            var sumWires = new Connection<HypnodeValue>[8];
+            Connection? carry = null;
+            var sumWires = new Connection[8];
 
             for (int i = 0; i < 8; ++i)
             {
@@ -78,7 +78,7 @@ public class FullAdderByte : INode
                 adder.SetPort(FullAdder.InputB, bWire);
                 adder.SetPort(FullAdder.InputC, i == 0 ? cIn : carry!);
 
-                carry  = graph.CreateConnection();
+                carry = graph.CreateConnection();
                 var sumWire = graph.CreateConnection();
                 sumWires[i] = sumWire;
 
@@ -86,7 +86,7 @@ public class FullAdderByte : INode
                 adder.SetPort(FullAdder.OutputCarry, carry);
             }
 
-            var sumMux    = graph.AddNode(new ByteSplitterOut());
+            var sumMux = graph.AddNode(new ByteSplitterOut());
             var resultWire = graph.CreateConnection();
 
             for (int i = 0; i < 8; ++i)
