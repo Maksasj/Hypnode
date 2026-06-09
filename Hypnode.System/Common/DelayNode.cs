@@ -15,7 +15,7 @@ public class DelayNode<T> : INode
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Ports.Input  && connection is Connection<T> con0) _inputPort  = con0;
+        if (portName == Ports.Input && connection is Connection<T> con0) _inputPort = con0;
         if (portName == Ports.Output && connection is Connection<T> con1) _outputPort = con1;
         return this;
     }

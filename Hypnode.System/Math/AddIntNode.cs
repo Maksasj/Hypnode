@@ -14,8 +14,8 @@ public class AddIntNode : INode
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Input1      && connection is Connection<int> con0) _inputPort1 = con0;
-        if (portName == Input2      && connection is Connection<int> con1) _inputPort2 = con1;
+        if (portName == Input1 && connection is Connection<int> con0) _inputPort1 = con0;
+        if (portName == Input2 && connection is Connection<int> con1) _inputPort2 = con1;
         if (portName == Ports.Output && connection is Connection<int> con2) _outputPort = con2;
         return this;
     }

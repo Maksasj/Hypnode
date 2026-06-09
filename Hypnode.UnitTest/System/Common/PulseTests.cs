@@ -1,4 +1,5 @@
 using Hypnode.Core;
+using Hypnode.Core.Graph;
 using Hypnode.Logic;
 using Hypnode.System.Common;
 using Moq;

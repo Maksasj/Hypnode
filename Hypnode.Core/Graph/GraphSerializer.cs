@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace Hypnode.Core;
+namespace Hypnode.Core.Graph;
 
 public static class GraphSerializer
 {

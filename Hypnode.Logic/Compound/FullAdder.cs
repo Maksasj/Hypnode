@@ -1,4 +1,5 @@
 using Hypnode.Core;
+using Hypnode.Core.Graph;
 using Hypnode.Logic.Gates;
 using Hypnode.System.Common;
 using System.Collections;

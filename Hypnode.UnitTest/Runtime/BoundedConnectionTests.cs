@@ -1,4 +1,6 @@
 using Hypnode.Core;
+using Hypnode.Core.Connections;
+using Hypnode.Core.Graph;
 using Hypnode.System.Common;
 
 namespace Hypnode.UnitTests.Runtime;

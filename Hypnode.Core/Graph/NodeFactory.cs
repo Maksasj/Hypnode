@@ -1,4 +1,4 @@
-namespace Hypnode.Core;
+namespace Hypnode.Core.Graph;
 
 public class NodeFactory
 {

@@ -1,6 +1,7 @@
+using Hypnode.Core.Connections;
 using System.Collections;
 
-namespace Hypnode.Core;
+namespace Hypnode.Core.Graph;
 
 public class CoroutineNodeGraph : INodeGraph
 {

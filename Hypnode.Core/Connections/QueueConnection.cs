@@ -1,4 +1,4 @@
-namespace Hypnode.Core;
+namespace Hypnode.Core.Connections;
 
 public class QueueConnection<T> : Connection<T>
 {
