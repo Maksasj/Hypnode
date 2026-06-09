@@ -4,8 +4,11 @@ using Hypnode.Logic.Utils;
 using Hypnode.System.Common;
 using System.Collections;
 
+using Hypnode.Core.Modules;
+
 namespace Hypnode.Logic.Compound;
 
+[HypnodeNode("full-adder-byte", "8-bit full adder (INA, INB → OUTSUM)")]
 public class FullAdderByte : INode
 {
     public const string InputA = "INA";

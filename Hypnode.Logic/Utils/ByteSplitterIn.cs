@@ -1,8 +1,11 @@
 using Hypnode.Core;
 using System.Collections;
 
+using Hypnode.Core.Modules;
+
 namespace Hypnode.Logic.Utils;
 
+[HypnodeNode("byte-splitter-in", "Splits a byte into 8 LogicValue bits (IN → 0..7)")]
 public class ByteSplitterIn : INode
 {
     private Connection<byte>? _inputPort = null;

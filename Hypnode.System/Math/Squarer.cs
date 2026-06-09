@@ -1,8 +1,11 @@
 using Hypnode.Core;
 using System.Collections;
 
+using Hypnode.Core.Modules;
+
 namespace Hypnode.System.Math;
 
+[HypnodeNode("squarer", "Squares each incoming int packet")]
 public class Squarer : INode
 {
     private Connection<int>? _inputPort = null;

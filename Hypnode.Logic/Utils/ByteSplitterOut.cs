@@ -1,8 +1,11 @@
 using Hypnode.Core;
 using System.Collections;
 
+using Hypnode.Core.Modules;
+
 namespace Hypnode.Logic.Utils;
 
+[HypnodeNode("byte-splitter-out", "Assembles 8 LogicValue bits into a byte (0..7 → OUT)")]
 public class ByteSplitterOut : INode
 {
     private readonly Connection<LogicValue>[] _inputPorts = new Connection<LogicValue>[8];

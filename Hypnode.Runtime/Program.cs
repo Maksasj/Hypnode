@@ -1,11 +1,4 @@
 using Hypnode.Core.Graph;
-using Hypnode.Logic;
-using Hypnode.Logic.Compound;
-using Hypnode.Logic.Gates;
-using Hypnode.Logic.Utils;
-using Hypnode.System.Common;
-using Hypnode.System.IO;
-using Hypnode.System.Math;
 
 namespace Hypnode.Runtime;
 
@@ -19,16 +12,48 @@ internal static class Program
             return 0;
         }
 
-        var filePath = args[0];
+        var subcommand = args[0];
+        var rest = args[1..];
 
-        if (!File.Exists(filePath))
+        return subcommand switch
         {
-            Console.Error.WriteLine($"error: file not found: {filePath}");
+            "run"     => RunCommand(rest),
+            "modules" => ModulesCommand(rest),
+            _         => UnknownCommand(subcommand),
+        };
+    }
+
+    static int RunCommand(string[] args)
+    {
+        var modulePaths = new List<string>();
+        string? graphFile = null;
+
+        for (int i = 0; i < args.Length; i++)
+        {
+            if (args[i] == "--module" && i + 1 < args.Length)
+                modulePaths.Add(args[++i]);
+            else
+                graphFile = args[i];
+        }
+
+        if (graphFile is null)
+        {
+            Console.Error.WriteLine("error: no graph file specified");
+            Console.Error.WriteLine("usage: hypnode run [--module <dll>]... <graph.xml>");
             return 1;
         }
 
+        if (!File.Exists(graphFile))
+        {
+            Console.Error.WriteLine($"error: file not found: {graphFile}");
+            return 1;
+        }
+
+        var factory = new NodeFactory();
+        ModuleLoader.LoadAll(modulePaths, factory);
+
         string xml;
-        try { xml = File.ReadAllText(filePath); }
+        try { xml = File.ReadAllText(graphFile); }
         catch (Exception ex)
         {
             Console.Error.WriteLine($"error: could not read file: {ex.Message}");
@@ -44,7 +69,7 @@ internal static class Program
         }
 
         CoroutineNodeGraph graph;
-        try { graph = BuildFactory().Build(definition); }
+        try { graph = factory.Build(definition); }
         catch (InvalidOperationException ex)
         {
             Console.Error.WriteLine($"error: could not build graph: {ex.Message}");
@@ -61,137 +86,76 @@ internal static class Program
         return 0;
     }
 
+    static int ModulesCommand(string[] args)
+    {
+        var modulePaths = new List<string>();
+
+        for (int i = 0; i < args.Length; i++)
+        {
+            if (args[i] == "--module" && i + 1 < args.Length)
+                modulePaths.Add(args[++i]);
+        }
+
+        var factory = new NodeFactory();
+        var loaded = ModuleLoader.LoadAll(modulePaths, factory);
+
+        if (loaded.Count == 0)
+        {
+            Console.WriteLine("No modules loaded.");
+            return 0;
+        }
+
+        Console.WriteLine($"Loaded {loaded.Count} module(s):\n");
+
+        foreach (var m in loaded)
+        {
+            Console.WriteLine($"  {m.Meta.Name} v{m.Meta.Version}");
+            Console.WriteLine($"  {m.Meta.Description}");
+
+            if (m.Nodes.Count > 0)
+            {
+                Console.WriteLine($"\n  Nodes ({m.Nodes.Count}):");
+                foreach (var node in m.Nodes)
+                    Console.WriteLine($"    {node.Name,-24} {node.Description}");
+            }
+
+            if (m.ConnectionTypes.Count > 0)
+            {
+                Console.WriteLine($"\n  Connection types ({m.ConnectionTypes.Count}):");
+                foreach (var conn in m.ConnectionTypes)
+                    Console.WriteLine($"    {conn}");
+            }
+
+            Console.WriteLine();
+        }
+
+        return 0;
+    }
+
+    static int UnknownCommand(string cmd)
+    {
+        Console.Error.WriteLine($"error: unknown command '{cmd}'");
+        PrintHelp();
+        return 1;
+    }
+
     static void PrintHelp()
     {
         Console.WriteLine("""
             Hypnode Runtime
             ===============
             Usage:
-              hypnode <graph.xml>    Load and run a graph from an XML file
-              hypnode --help         Show this help
+              hypnode run [--module <dll>]... <graph.xml>
+              hypnode modules [--module <dll>]...
+              hypnode --help
 
-            XML format:
-              <Graph>
-                <Nodes>
-                  <Node id="n0" type="pulse-int">
-                    <Parameters><Parameter name="value">42</Parameter></Parameters>
-                  </Node>
-                  <Node id="n1" type="printer-int" />
-                </Nodes>
-                <Connections>
-                  <Connection type="int">
-                    <From node="n0" port="OUT" />
-                    <To   node="n1" port="IN"  />
-                  </Connection>
-                </Connections>
-              </Graph>
+            Commands:
+              run        Load modules and evaluate a graph XML file
+              modules    List all loaded modules
 
-            Connection type aliases:
-              int, string, bool, byte, float, double, LogicValue
-
-            Built-in node types:
-              -- sources / sinks --
-              pulse-int         Emit a single int packet        param: value
-              pulse-bool        Emit a single bool packet       param: value (true/false)
-              pulse-byte        Emit a single byte packet       param: value
-              pulse-string      Emit a single string packet     param: value
-              pulse-logic       Emit a single LogicValue        param: value (True/False)
-              multi-int         Emit multiple int packets       param: values (comma-separated)
-              generator         Emit incrementing ints forever
-              register-int      Store last received int
-              register-bool     Store last received bool
-              register-string   Store last received string
-              register-logic    Store last received LogicValue
-              printer-int       Print each int to stdout
-              printer-bool      Print each bool to stdout
-              printer-string    Print each string to stdout
-              printer-logic     Print each LogicValue to stdout
-              void-int          Discard int packets
-              void-logic        Discard LogicValue packets
-
-              -- routing --
-              splitter-int      Fan-out: one int input, multiple outputs
-              splitter-logic    Fan-out: one LogicValue input, multiple outputs
-              if-even           Route ints: even -> THEN, odd  -> ELSE
-              if-positive       Route ints: > 0  -> THEN, else -> ELSE
-
-              -- feedback / cycles --
-              delay-int         Latch node: emits seed, then echoes each input next tick  param: value
-
-              -- transform --
-              add-int           Sum two int streams (IN1, IN2 → OUT)
-              squarer           Square each int packet
-              fold-sum          Running sum of ints
-              fold-product      Running product of ints
-              fold-count        Count packets (int input)
-              filter-even       Pass only even ints
-              filter-odd        Pass only odd ints
-              filter-positive   Pass only positive ints
-
-              -- logic gates --
-              and-gate          Ports: INA, INB, OUT  (LogicValue)
-              or-gate           Ports: INA, INB, OUT  (LogicValue)
-              xor-gate          Ports: INA, INB, OUT  (LogicValue)
-              not-gate          Ports: IN,  OUT       (LogicValue)
-
-              -- compound logic --
-              full-adder        Ports: INA, INB, INC, OUTSUM, OUTC
-              full-adder-byte   Ports: INA, INB, OUTSUM  (byte)
-              byte-splitter-in  Ports: IN, 0-7  (byte in, LogicValue out)
-              byte-splitter-out Ports: 0-7, OUT (LogicValue in, byte out)
+            Options:
+              --module <dll>   Load a module DLL (may be repeated).
+                               If omitted, all modules in the current process are used.
             """);
     }
-
-    static NodeFactory BuildFactory() => new NodeFactory()
-        .RegisterConnectionType("LogicValue", g => g.CreateConnection<LogicValue>())
-
-        // sources
-        .Register("pulse-int", p => new PulseValue<int>(int.Parse(p["value"])))
-        .Register("pulse-bool", p => new PulseValue<bool>(bool.Parse(p["value"])))
-        .Register("pulse-byte", p => new PulseValue<byte>(byte.Parse(p["value"])))
-        .Register("pulse-string", p => new PulseValue<string>(p["value"]))
-        .Register("pulse-logic", p => new PulseValue<LogicValue>(Enum.Parse<LogicValue>(p["value"])))
-        .Register("multi-int", p => new MultiPulseValue<int>(p["values"].Split(',').Select(int.Parse)))
-        .Register("generator", () => new Generator())
-
-        // sinks / stores
-        .Register("register-int", () => new Register<int>())
-        .Register("register-bool", () => new Register<bool>())
-        .Register("register-string", () => new Register<string>())
-        .Register("register-logic", () => new Register<LogicValue>())
-        .Register("printer-int", () => new Printer<int>())
-        .Register("printer-bool", () => new Printer<bool>())
-        .Register("printer-string", () => new Printer<string>())
-        .Register("printer-logic", () => new Printer<LogicValue>())
-        .Register("void-int", () => new VoidSink<int>())
-        .Register("void-logic", () => new VoidSink<LogicValue>())
-
-        // routing
-        .Register("splitter-int", () => new Splitter<int>())
-        .Register("splitter-logic", () => new Splitter<LogicValue>())
-        .Register("if-even", () => new IfNode<int>(x => x % 2 == 0))
-        .Register("if-positive", () => new IfNode<int>(x => x > 0))
-
-        // transform
-        .Register("delay-int", p => new DelayNode<int>(int.Parse(p["value"])))
-        .Register("add-int", () => new AddIntNode())
-        .Register("squarer", () => new Squarer())
-        .Register("fold-sum", () => new FoldNode<int, int>(0, (acc, x) => acc + x))
-        .Register("fold-product", () => new FoldNode<int, int>(1, (acc, x) => acc * x))
-        .Register("fold-count", () => new FoldNode<int, int>(0, (acc, _) => acc + 1))
-        .Register("filter-even", () => new FilterNode<int>(x => x % 2 == 0))
-        .Register("filter-odd", () => new FilterNode<int>(x => x % 2 != 0))
-        .Register("filter-positive", () => new FilterNode<int>(x => x > 0))
-
-        // logic gates
-        .Register("and-gate", () => new AndGate())
-        .Register("or-gate", () => new OrGate())
-        .Register("xor-gate", () => new XorGate())
-        .Register("not-gate", () => new NotGate())
-
-        // compound logic
-        .Register("full-adder", () => new FullAdder())
-        .Register("full-adder-byte", () => new FullAdderByte())
-        .Register("byte-splitter-in", () => new ByteSplitterIn())
-        .Register("byte-splitter-out", () => new ByteSplitterOut());
 }

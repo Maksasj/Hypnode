@@ -1,8 +1,11 @@
 using Hypnode.Core;
 using System.Collections;
 
+using Hypnode.Core.Modules;
+
 namespace Hypnode.System.Math;
 
+[HypnodeNode("generator", "Emits incrementing int packets indefinitely")]
 public class Generator : INode
 {
     private Connection<int>? _outputPort = null;

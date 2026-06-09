@@ -1,8 +1,11 @@
 using Hypnode.Core;
 using System.Collections;
 
+using Hypnode.Core.Modules;
+
 namespace Hypnode.System.Math;
 
+[HypnodeNode("add-int", "Sums two int streams (IN1, IN2 → OUT)")]
 public class AddIntNode : INode
 {
     public const string Input1 = "IN1";

@@ -1,8 +1,11 @@
 using Hypnode.Core;
 using System.Collections;
 
+using Hypnode.Core.Modules;
+
 namespace Hypnode.Logic.Gates;
 
+[HypnodeNode("not-gate", "Logical NOT of one LogicValue input")]
 public class NotGate : INode
 {
     private Connection<LogicValue>? _inputPort = null;
