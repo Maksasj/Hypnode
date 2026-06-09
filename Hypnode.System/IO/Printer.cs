@@ -1,15 +1,18 @@
 using Hypnode.Core;
+using Hypnode.Core.Modules;
+using Hypnode.Core.Types;
 using System.Collections;
 
 namespace Hypnode.System.IO;
 
-public class Printer<T> : INode
+[HypnodeNode("printer", "Prints each received value to stdout")]
+public class Printer : INode
 {
-    private Connection<T>? _inputPort = null;
+    private Connection<HypnodeValue>? _inputPort;
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Ports.Input && connection is Connection<T> conn) _inputPort = conn;
+        if (portName == Ports.Input) NodeExtensions.TryAttach(ref _inputPort, connection);
         return this;
     }
 
@@ -21,7 +24,7 @@ public class Printer<T> : INode
         {
             if (_inputPort.IsClosed && !_inputPort.HasData) break;
             if (!_inputPort.HasData) { yield return null; continue; }
-            Console.WriteLine($"{_inputPort.Receive()}");
+            Console.WriteLine(_inputPort.Receive());
         }
     }
 }

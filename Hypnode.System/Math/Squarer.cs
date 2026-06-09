@@ -1,20 +1,20 @@
 using Hypnode.Core;
-using System.Collections;
-
 using Hypnode.Core.Modules;
+using Hypnode.Core.Types;
+using System.Collections;
 
 namespace Hypnode.System.Math;
 
 [HypnodeNode("squarer", "Squares each incoming int packet")]
 public class Squarer : INode
 {
-    private Connection<int>? _inputPort = null;
-    private Connection<int>? _outputPort = null;
+    private Connection<HypnodeValue>? _inputPort;
+    private Connection<HypnodeValue>? _outputPort;
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Ports.Input && connection is Connection<int> con0) _inputPort = con0;
-        if (portName == Ports.Output && connection is Connection<int> con1) _outputPort = con1;
+        if (portName == Ports.Input) NodeExtensions.TryAttach(ref _inputPort, connection);
+        if (portName == Ports.Output) NodeExtensions.TryAttach(ref _outputPort, connection);
         return this;
     }
 
@@ -26,8 +26,8 @@ public class Squarer : INode
         {
             if (_inputPort.IsClosed && !_inputPort.HasData) break;
             if (!_inputPort.HasData) { yield return null; continue; }
-            var packet = _inputPort.Receive();
-            _outputPort?.Send(packet * packet);
+            var n = _inputPort.Receive().AsInt();
+            _outputPort?.Send(new IntValue(n * n));
         }
 
         _outputPort?.Close();

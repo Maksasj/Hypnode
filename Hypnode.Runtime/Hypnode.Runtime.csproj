@@ -10,7 +10,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Hypnode.Core\Hypnode.Core.csproj" />
-    <ProjectReference Include="..\Hypnode.Logic\Hypnode.Logic.csproj" />
     <ProjectReference Include="..\Hypnode.System\Hypnode.System.csproj" />
   </ItemGroup>
 

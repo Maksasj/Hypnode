@@ -1,23 +1,23 @@
 using Hypnode.Core;
-using System.Collections;
-
 using Hypnode.Core.Modules;
+using Hypnode.Core.Types;
+using System.Collections;
 
 namespace Hypnode.Logic.Utils;
 
 [HypnodeNode("byte-splitter-in", "Splits a byte into 8 LogicValue bits (IN → 0..7)")]
 public class ByteSplitterIn : INode
 {
-    private Connection<byte>? _inputPort = null;
-    private readonly Connection<LogicValue>[] _outputPorts = new Connection<LogicValue>[8];
+    private Connection<HypnodeValue>? _inputPort;
+    private readonly Connection<HypnodeValue>?[] _outputPorts = new Connection<HypnodeValue>?[8];
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Ports.Input && connection is Connection<byte> connIn)
-            _inputPort = connIn;
+        if (portName == Ports.Input)
+            NodeExtensions.TryAttach(ref _inputPort, connection);
 
         if (int.TryParse(portName, out int idx) && idx >= 0 && idx < 8
-            && connection is Connection<LogicValue> connBit)
+            && connection is Connection<HypnodeValue> connBit)
             _outputPorts[idx] = connBit;
 
         return this;
@@ -32,15 +32,14 @@ public class ByteSplitterIn : INode
             if (_inputPort.IsClosed && !_inputPort.HasData) break;
             if (!_inputPort.HasData) { yield return null; continue; }
 
-            var packet = _inputPort.Receive();
-            LogicValue[] values = [.. Enumerable.Range(0, 8)
-                .Select(i => (packet & (1 << i)) != 0 ? LogicValue.True : LogicValue.False)];
-
-            for (int i = 0; i < 8; ++i)
-                _outputPorts[i]?.Send(values[i]);
+            var packet = _inputPort.Receive().AsByte();
+            for (int i = 0; i < 8; i++)
+            {
+                var bit = (packet & (1 << i)) != 0 ? LogicValue.True : LogicValue.False;
+                _outputPorts[i]?.Send(new LogicPacket(bit));
+            }
         }
 
-        foreach (var conn in _outputPorts)
-            conn?.Close();
+        foreach (var conn in _outputPorts) conn?.Close();
     }
 }

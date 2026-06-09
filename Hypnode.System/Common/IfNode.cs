@@ -1,25 +1,26 @@
 using Hypnode.Core;
+using Hypnode.Core.Types;
 using System.Collections;
 
 namespace Hypnode.System.Common;
 
-public class IfNode<T> : INode
+public class IfNode : INode
 {
     public const string Then = "THEN";
     public const string Else = "ELSE";
 
-    private readonly Func<T, bool> _predicate;
-    private Connection<T>? _inputPort = null;
-    private Connection<T>? _thenPort = null;
-    private Connection<T>? _elsePort = null;
+    private readonly Func<HypnodeValue, bool> _predicate;
+    private Connection<HypnodeValue>? _inputPort;
+    private Connection<HypnodeValue>? _thenPort;
+    private Connection<HypnodeValue>? _elsePort;
 
-    public IfNode(Func<T, bool> predicate) { _predicate = predicate; }
+    public IfNode(Func<HypnodeValue, bool> predicate) => _predicate = predicate;
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Ports.Input && connection is Connection<T> con0) _inputPort = con0;
-        if (portName == Then && connection is Connection<T> con1) _thenPort = con1;
-        if (portName == Else && connection is Connection<T> con2) _elsePort = con2;
+        if (portName == Ports.Input) NodeExtensions.TryAttach(ref _inputPort, connection);
+        if (portName == Then) NodeExtensions.TryAttach(ref _thenPort, connection);
+        if (portName == Else) NodeExtensions.TryAttach(ref _elsePort, connection);
         return this;
     }
 

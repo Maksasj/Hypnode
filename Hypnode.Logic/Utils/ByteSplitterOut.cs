@@ -1,23 +1,23 @@
 using Hypnode.Core;
-using System.Collections;
-
 using Hypnode.Core.Modules;
+using Hypnode.Core.Types;
+using System.Collections;
 
 namespace Hypnode.Logic.Utils;
 
 [HypnodeNode("byte-splitter-out", "Assembles 8 LogicValue bits into a byte (0..7 → OUT)")]
 public class ByteSplitterOut : INode
 {
-    private readonly Connection<LogicValue>[] _inputPorts = new Connection<LogicValue>[8];
-    private Connection<byte>? _outputPort = null;
+    private readonly Connection<HypnodeValue>?[] _inputPorts = new Connection<HypnodeValue>?[8];
+    private Connection<HypnodeValue>? _outputPort;
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Ports.Output && connection is Connection<byte> connOut)
-            _outputPort = connOut;
+        if (portName == Ports.Output)
+            NodeExtensions.TryAttach(ref _outputPort, connection);
 
         if (int.TryParse(portName, out int idx) && idx >= 0 && idx < 8
-            && connection is Connection<LogicValue> connBit)
+            && connection is Connection<HypnodeValue> connBit)
             _inputPorts[idx] = connBit;
 
         return this;
@@ -31,23 +31,19 @@ public class ByteSplitterOut : INode
 
         while (true)
         {
-            if (Enumerable.Range(0, 8).Any(i => _inputPorts[i].IsClosed && !_inputPorts[i].HasData))
+            if (Enumerable.Range(0, 8).Any(i => _inputPorts[i]!.IsClosed && !_inputPorts[i]!.HasData))
                 break;
 
-            if (!Enumerable.Range(0, 8).All(i => _inputPorts[i].HasData))
+            if (!Enumerable.Range(0, 8).All(i => _inputPorts[i]!.HasData)) { yield return null; continue; }
+
+            byte result = 0;
+            for (int i = 0; i < 8; i++)
             {
-                yield return null;
-                continue;
+                if (_inputPorts[i]!.Receive().AsLogic() == LogicValue.True)
+                    result |= (byte)(1 << i);
             }
 
-            var values = new LogicValue[8];
-            for (int i = 0; i < 8; i++) values[i] = _inputPorts[i].Receive();
-
-            byte result = (byte)Enumerable.Range(0, 8)
-                .Select(i => values[i] == LogicValue.True ? (1 << i) : 0)
-                .Aggregate(0, (acc, bit) => acc | bit);
-
-            _outputPort?.Send(result);
+            _outputPort?.Send(new ByteValue(result));
         }
 
         _outputPort?.Close();

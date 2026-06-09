@@ -3,13 +3,13 @@
   counter.xml
   Counts from 1 to infinity and prints each number.
 
-  Run with:  hypnode Samples/counter.xml
+  Run with:  hypnode run Samples/counter.xml
 -->
 <Graph>
   <Nodes>
-    <Node id="gen"   type="generator"   />
-    <Node id="count" type="fold-count"  />
-    <Node id="print" type="printer-int" />
+    <Node id="gen"   type="generator"  />
+    <Node id="count" type="fold-count" />
+    <Node id="print" type="printer"    />
   </Nodes>
   <Connections>
     <Connection type="int">

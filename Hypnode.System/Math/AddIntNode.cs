@@ -1,7 +1,7 @@
 using Hypnode.Core;
-using System.Collections;
-
 using Hypnode.Core.Modules;
+using Hypnode.Core.Types;
+using System.Collections;
 
 namespace Hypnode.System.Math;
 
@@ -11,15 +11,15 @@ public class AddIntNode : INode
     public const string Input1 = "IN1";
     public const string Input2 = "IN2";
 
-    private Connection<int>? _inputPort1 = null;
-    private Connection<int>? _inputPort2 = null;
-    private Connection<int>? _outputPort = null;
+    private Connection<HypnodeValue>? _inputPort1;
+    private Connection<HypnodeValue>? _inputPort2;
+    private Connection<HypnodeValue>? _outputPort;
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Input1 && connection is Connection<int> con0) _inputPort1 = con0;
-        if (portName == Input2 && connection is Connection<int> con1) _inputPort2 = con1;
-        if (portName == Ports.Output && connection is Connection<int> con2) _outputPort = con2;
+        if (portName == Input1) NodeExtensions.TryAttach(ref _inputPort1, connection);
+        if (portName == Input2) NodeExtensions.TryAttach(ref _inputPort2, connection);
+        if (portName == Ports.Output) NodeExtensions.TryAttach(ref _outputPort, connection);
         return this;
     }
 
@@ -36,7 +36,7 @@ public class AddIntNode : INode
 
             if (!_inputPort1.HasData || !_inputPort2.HasData) { yield return null; continue; }
 
-            _outputPort?.Send(_inputPort1.Receive() + _inputPort2.Receive());
+            _outputPort?.Send(new IntValue(_inputPort1.Receive().AsInt() + _inputPort2.Receive().AsInt()));
         }
 
         _outputPort?.Close();

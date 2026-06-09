@@ -1,16 +1,17 @@
 using Hypnode.Core;
+using Hypnode.Core.Types;
 using System.Collections;
 
 namespace Hypnode.System.Common;
 
-public class FoldNode<TIn, TOut> : INode
+public class FoldNode : INode
 {
-    private readonly TOut _seed;
-    private readonly Func<TOut, TIn, TOut> _folder;
-    private Connection<TIn>? _inputPort = null;
-    private Connection<TOut>? _outputPort = null;
+    private readonly HypnodeValue _seed;
+    private readonly Func<HypnodeValue, HypnodeValue, HypnodeValue> _folder;
+    private Connection<HypnodeValue>? _inputPort;
+    private Connection<HypnodeValue>? _outputPort;
 
-    public FoldNode(TOut seed, Func<TOut, TIn, TOut> folder)
+    public FoldNode(HypnodeValue seed, Func<HypnodeValue, HypnodeValue, HypnodeValue> folder)
     {
         _seed = seed;
         _folder = folder;
@@ -18,8 +19,8 @@ public class FoldNode<TIn, TOut> : INode
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Ports.Input && connection is Connection<TIn> con0) _inputPort = con0;
-        if (portName == Ports.Output && connection is Connection<TOut> con1) _outputPort = con1;
+        if (portName == Ports.Input) NodeExtensions.TryAttach(ref _inputPort, connection);
+        if (portName == Ports.Output) NodeExtensions.TryAttach(ref _outputPort, connection);
         return this;
     }
 

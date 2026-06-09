@@ -1,5 +1,6 @@
 using Hypnode.Core;
 using Hypnode.Core.Graph;
+using Hypnode.Core.Types;
 using Hypnode.System.Common;
 using Hypnode.System.Math;
 
@@ -12,15 +13,14 @@ public class GraphSerializerTests
     public void TestSerialize_ProducesValidXml()
     {
         var def = new GraphDefinition();
-        def.AddNode("src", "pulse-int", ("value", "5"));
-        def.AddNode("result", "register-int");
+        def.AddNode("src", "pulse", ("type", "int"), ("value", "5"));
+        def.AddNode("result", "register");
         def.Connect("int", "src", Ports.Output, "result", Ports.Input);
 
         var xml = GraphSerializer.Serialize(def);
 
         Assert.That(xml, Does.Contain("<Graph>"));
-        Assert.That(xml, Does.Contain("pulse-int"));
-        Assert.That(xml, Does.Contain("register-int"));
+        Assert.That(xml, Does.Contain("type=\"pulse\""));
         Assert.That(xml, Does.Contain("<Parameter name=\"value\">5</Parameter>"));
     }
 
@@ -28,8 +28,8 @@ public class GraphSerializerTests
     public void TestDeserialize_RestoresNodes()
     {
         var def = new GraphDefinition();
-        def.AddNode("src", "pulse-int", ("value", "42"));
-        def.AddNode("result", "register-int");
+        def.AddNode("src", "pulse", ("type", "int"), ("value", "42"));
+        def.AddNode("result", "register");
         def.Connect("int", "src", Ports.Output, "result", Ports.Input);
 
         var xml = GraphSerializer.Serialize(def);
@@ -37,7 +37,7 @@ public class GraphSerializerTests
 
         Assert.That(loaded.Nodes.Count, Is.EqualTo(2));
         Assert.That(loaded.Nodes[0].Id, Is.EqualTo("src"));
-        Assert.That(loaded.Nodes[0].TypeName, Is.EqualTo("pulse-int"));
+        Assert.That(loaded.Nodes[0].TypeName, Is.EqualTo("pulse"));
         Assert.That(loaded.Nodes[0].Parameters["value"], Is.EqualTo("42"));
         Assert.That(loaded.Nodes[1].Id, Is.EqualTo("result"));
     }
@@ -46,8 +46,8 @@ public class GraphSerializerTests
     public void TestDeserialize_RestoresConnections()
     {
         var def = new GraphDefinition();
-        def.AddNode("src", "pulse-int", ("value", "1"));
-        def.AddNode("result", "register-int");
+        def.AddNode("src", "pulse", ("type", "int"), ("value", "1"));
+        def.AddNode("result", "register");
         def.Connect("int", "src", Ports.Output, "result", Ports.Input);
 
         var loaded = GraphSerializer.Deserialize(GraphSerializer.Serialize(def));
@@ -64,25 +64,25 @@ public class GraphSerializerTests
     public void TestRoundTrip_BuildAndEvaluate()
     {
         var factory = new NodeFactory();
-        factory.Register("pulse-int", p => new PulseValue<int>(int.Parse(p["value"])));
-        factory.Register("register-int", () => new Register<int>());
+        factory.Register("pulse", p => new PulseValue(new IntValue(int.Parse(p["value"]))));
+        factory.Register("register", () => new Register());
         factory.Register("squarer", () => new Squarer());
 
         var def = new GraphDefinition();
-        def.AddNode("src", "pulse-int", ("value", "9"));
+        def.AddNode("src", "pulse", ("value", "9"));
         def.AddNode("sq", "squarer");
-        def.AddNode("result", "register-int");
+        def.AddNode("result", "register");
         def.Connect("int", "src", Ports.Output, "sq", Ports.Input);
         def.Connect("int", "sq", Ports.Output, "result", Ports.Input);
 
         var xml = GraphSerializer.Serialize(def);
         var loaded = GraphSerializer.Deserialize(xml);
         var graph = factory.Build(loaded);
-        var result = (Register<int>)graph.Nodes[2];
+        var result = (Register)graph.Nodes[2];
 
         graph.Evaluate();
 
-        Assert.That(result.GetValue(), Is.EqualTo(81));
+        Assert.That(result.GetValue()!.AsInt(), Is.EqualTo(81));
     }
 
     [Test]

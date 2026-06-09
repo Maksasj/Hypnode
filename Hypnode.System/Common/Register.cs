@@ -1,20 +1,21 @@
 using Hypnode.Core;
+using Hypnode.Core.Types;
 using System.Collections;
 
 namespace Hypnode.System.Common;
 
-public class Register<T> : INode
+public class Register : INode
 {
-    private T? _value;
-    private Connection<T>? _inputPort = null;
+    private HypnodeValue? _value;
+    private Connection<HypnodeValue>? _inputPort;
+
+    public HypnodeValue? GetValue() => _value;
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Ports.Input && connection is Connection<T> con) _inputPort = con;
+        if (portName == Ports.Input) NodeExtensions.TryAttach(ref _inputPort, connection);
         return this;
     }
-
-    public T? GetValue() => _value;
 
     public IEnumerator Execute()
     {

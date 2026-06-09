@@ -1,5 +1,6 @@
 using Hypnode.Core;
 using Hypnode.Core.Graph;
+using Hypnode.Core.Types;
 using Hypnode.System.Common;
 using Moq;
 
@@ -12,31 +13,31 @@ public class FilterNodeTests
     public void TestFilter_PassingPacket_Forwarded()
     {
         var graph = new CoroutineNodeGraph();
-        var pulse = graph.AddNode(new PulseValue<int>(4));
-        var filter = graph.AddNode(new FilterNode<int>(x => x % 2 == 0));
-        var result = graph.AddNode(new Register<int>());
+        var pulse = graph.AddNode(new PulseValue(new IntValue(4)));
+        var filter = graph.AddNode(new FilterNode(v => v.AsInt() % 2 == 0));
+        var result = graph.AddNode(new Register());
 
-        graph.AddConnection<int>(pulse, Ports.Output, filter, Ports.Input);
-        graph.AddConnection<int>(filter, Ports.Output, result, Ports.Input);
+        graph.AddConnection(pulse, Ports.Output, filter, Ports.Input);
+        graph.AddConnection(filter, Ports.Output, result, Ports.Input);
 
         graph.Evaluate();
 
-        Assert.That(result.GetValue(), Is.EqualTo(4));
+        Assert.That(result.GetValue()!.AsInt(), Is.EqualTo(4));
     }
 
     [Test]
     public void TestFilter_BlockedPacket_NotForwarded()
     {
         var graph = new CoroutineNodeGraph();
-        var connIn = graph.CreateConnection<int>();
-        var connOut = new Mock<Connection<int>>();
+        var connIn = graph.CreateConnection();
+        var connOut = new Mock<Connection<HypnodeValue>>();
 
-        graph.AddNode(new PulseValue<int>(3)).SetPort(Ports.Output, connIn);
-        graph.AddNode(new FilterNode<int>(x => x % 2 == 0)).SetPort(Ports.Input, connIn).SetPort(Ports.Output, connOut.Object);
+        graph.AddNode(new PulseValue(new IntValue(3))).SetPort(Ports.Output, connIn);
+        graph.AddNode(new FilterNode(v => v.AsInt() % 2 == 0)).SetPort(Ports.Input, connIn).SetPort(Ports.Output, connOut.Object);
 
         graph.Evaluate();
 
-        connOut.Verify(c => c.Send(It.IsAny<int>()), Times.Never);
+        connOut.Verify(c => c.Send(It.IsAny<HypnodeValue>()), Times.Never);
         connOut.Verify(c => c.Close(), Times.Once);
     }
 
@@ -44,31 +45,31 @@ public class FilterNodeTests
     public void TestFilter_MultiplePackets_OnlyPassingForwarded()
     {
         var graph = new CoroutineNodeGraph();
-        var multi = graph.AddNode(new MultiPulseValue<int>([1, 2, 3, 4, 5, 6]));
-        var filter = graph.AddNode(new FilterNode<int>(x => x % 2 == 0));
-        var result = graph.AddNode(new Register<int>());
+        var multi = graph.AddNode(new MultiPulseValue(new int[] { 1, 2, 3, 4, 5, 6 }.Select(i => (HypnodeValue)new IntValue(i))));
+        var filter = graph.AddNode(new FilterNode(v => v.AsInt() % 2 == 0));
+        var result = graph.AddNode(new Register());
 
-        graph.AddConnection<int>(multi, Ports.Output, filter, Ports.Input);
-        graph.AddConnection<int>(filter, Ports.Output, result, Ports.Input);
+        graph.AddConnection(multi, Ports.Output, filter, Ports.Input);
+        graph.AddConnection(filter, Ports.Output, result, Ports.Input);
 
         graph.Evaluate();
 
-        Assert.That(result.GetValue(), Is.EqualTo(6));
+        Assert.That(result.GetValue()!.AsInt(), Is.EqualTo(6));
     }
 
     [Test]
     public void TestFilter_AllBlocked_OutputClosedWithNoSend()
     {
         var graph = new CoroutineNodeGraph();
-        var connIn = graph.CreateConnection<int>();
-        var connOut = new Mock<Connection<int>>();
+        var connIn = graph.CreateConnection();
+        var connOut = new Mock<Connection<HypnodeValue>>();
 
-        graph.AddNode(new MultiPulseValue<int>([1, 3, 5])).SetPort(Ports.Output, connIn);
-        graph.AddNode(new FilterNode<int>(x => x % 2 == 0)).SetPort(Ports.Input, connIn).SetPort(Ports.Output, connOut.Object);
+        graph.AddNode(new MultiPulseValue(new int[] { 1, 3, 5 }.Select(i => (HypnodeValue)new IntValue(i)))).SetPort(Ports.Output, connIn);
+        graph.AddNode(new FilterNode(v => v.AsInt() % 2 == 0)).SetPort(Ports.Input, connIn).SetPort(Ports.Output, connOut.Object);
 
         graph.Evaluate();
 
-        connOut.Verify(c => c.Send(It.IsAny<int>()), Times.Never);
+        connOut.Verify(c => c.Send(It.IsAny<HypnodeValue>()), Times.Never);
         connOut.Verify(c => c.Close(), Times.Once);
     }
 }

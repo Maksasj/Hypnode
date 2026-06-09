@@ -1,6 +1,7 @@
 using Hypnode.Core;
 using Hypnode.Core.Connections;
 using Hypnode.Core.Graph;
+using Hypnode.Core.Types;
 using Hypnode.System.Common;
 
 namespace Hypnode.UnitTests.Runtime;
@@ -62,14 +63,14 @@ public class BoundedConnectionTests
     public void TestBoundedConnection_InGraph_DataFlowsCorrectly()
     {
         var graph = new CoroutineNodeGraph();
-        var pulse = graph.AddNode(new PulseValue<int>(7));
-        var result = graph.AddNode(new Register<int>());
+        var pulse = graph.AddNode(new PulseValue(new IntValue(7)));
+        var result = graph.AddNode(new Register());
 
-        graph.AddBoundedConnection<int>(pulse, Ports.Output, result, Ports.Input, capacity: 4);
+        graph.AddBoundedConnection(pulse, Ports.Output, result, Ports.Input, capacity: 4);
 
         graph.Evaluate();
 
-        Assert.That(result.GetValue(), Is.EqualTo(7));
+        Assert.That(result.GetValue()!.AsInt(), Is.EqualTo(7));
     }
 
     [Test]

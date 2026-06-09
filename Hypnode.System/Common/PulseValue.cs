@@ -1,18 +1,19 @@
 using Hypnode.Core;
+using Hypnode.Core.Types;
 using System.Collections;
 
 namespace Hypnode.System.Common;
 
-public class PulseValue<T> : INode
+public class PulseValue : INode
 {
-    private readonly T _value;
-    private Connection<T>? _outputPort = null;
+    private readonly HypnodeValue _value;
+    private Connection<HypnodeValue>? _outputPort;
 
-    public PulseValue(T value) { _value = value; }
+    public PulseValue(HypnodeValue value) => _value = value;
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Ports.Output && connection is Connection<T> con) _outputPort = con;
+        if (portName == Ports.Output) NodeExtensions.TryAttach(ref _outputPort, connection);
         return this;
     }
 

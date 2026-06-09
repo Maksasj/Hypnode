@@ -15,20 +15,26 @@
   Each tick: emit a, compute a+b, shift (a,b) → (b, a+b).
   The one-tick lag in DelayNode is what makes the cycle schedulable.
 
-  Run with:  hypnode Samples/fibonacci.xml
+  Run with:  hypnode run Samples/fibonacci.xml
 -->
 <Graph>
   <Nodes>
-    <Node id="delay_a" type="delay-int">
-      <Parameters><Parameter name="value">0</Parameter></Parameters>
+    <Node id="delay_a" type="delay">
+      <Parameters>
+        <Parameter name="type">int</Parameter>
+        <Parameter name="value">0</Parameter>
+      </Parameters>
     </Node>
-    <Node id="delay_b" type="delay-int">
-      <Parameters><Parameter name="value">1</Parameter></Parameters>
+    <Node id="delay_b" type="delay">
+      <Parameters>
+        <Parameter name="type">int</Parameter>
+        <Parameter name="value">1</Parameter>
+      </Parameters>
     </Node>
-    <Node id="split_a"  type="splitter-int" />
-    <Node id="split_b"  type="splitter-int" />
-    <Node id="add"      type="add-int"      />
-    <Node id="printer"  type="printer-int"  />
+    <Node id="split_a"  type="splitter" />
+    <Node id="split_b"  type="splitter" />
+    <Node id="add"      type="add-int"  />
+    <Node id="printer"  type="printer"  />
   </Nodes>
   <Connections>
     <!-- a → fan-out: printer + adder -->

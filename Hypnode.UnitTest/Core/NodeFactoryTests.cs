@@ -1,5 +1,6 @@
 using Hypnode.Core;
 using Hypnode.Core.Graph;
+using Hypnode.Core.Types;
 using Hypnode.System.Common;
 using Hypnode.System.Math;
 
@@ -8,14 +9,14 @@ namespace Hypnode.UnitTests.Core;
 [TestFixture]
 public class NodeFactoryTests
 {
-    private NodeFactory BuildFactory()
+    private static NodeFactory BuildFactory()
     {
         var factory = new NodeFactory();
-        factory.Register("pulse-int", p => new PulseValue<int>(int.Parse(p["value"])));
-        factory.Register("multi-int", p => new MultiPulseValue<int>(p["values"].Split(',').Select(int.Parse)));
-        factory.Register("register-int", () => new Register<int>());
+        factory.Register("pulse", p => new PulseValue(new IntValue(int.Parse(p["value"]))));
+        factory.Register("multi", p => new MultiPulseValue(p["values"].Split(',').Select(v => (HypnodeValue)new IntValue(int.Parse(v)))));
+        factory.Register("register", () => new Register());
         factory.Register("squarer", () => new Squarer());
-        factory.Register("fold-sum", () => new FoldNode<int, int>(0, (acc, x) => acc + x));
+        factory.Register("fold-sum", () => new FoldNode(new IntValue(0), (acc, x) => new IntValue(acc.AsInt() + x.AsInt())));
         return factory;
     }
 
@@ -23,18 +24,18 @@ public class NodeFactoryTests
     public void TestFactory_Build_EvaluatesCorrectly()
     {
         var def = new GraphDefinition();
-        def.AddNode("src", "pulse-int", ("value", "7"));
+        def.AddNode("src", "pulse", ("value", "7"));
         def.AddNode("sq", "squarer");
-        def.AddNode("result", "register-int");
+        def.AddNode("result", "register");
         def.Connect("int", "src", Ports.Output, "sq", Ports.Input);
         def.Connect("int", "sq", Ports.Output, "result", Ports.Input);
 
         var graph = BuildFactory().Build(def);
-        var result = (Register<int>)graph.Nodes[2];
+        var result = (Register)graph.Nodes[2];
 
         graph.Evaluate();
 
-        Assert.That(result.GetValue(), Is.EqualTo(49));
+        Assert.That(result.GetValue()!.AsInt(), Is.EqualTo(49));
     }
 
     [Test]
@@ -50,8 +51,8 @@ public class NodeFactoryTests
     public void TestFactory_UnknownConnectionType_Throws()
     {
         var def = new GraphDefinition();
-        def.AddNode("src", "pulse-int", ("value", "1"));
-        def.AddNode("result", "register-int");
+        def.AddNode("src", "pulse", ("value", "1"));
+        def.AddNode("result", "register");
         def.Connect("mystery-type", "src", Ports.Output, "result", Ports.Input);
 
         Assert.Throws<InvalidOperationException>(() => BuildFactory().Build(def));
@@ -61,36 +62,36 @@ public class NodeFactoryTests
     public void TestFactory_MultiplePackets_FoldSum()
     {
         var def = new GraphDefinition();
-        def.AddNode("src", "multi-int", ("values", "1,2,3,4,5"));
+        def.AddNode("src", "multi", ("values", "1,2,3,4,5"));
         def.AddNode("fold", "fold-sum");
-        def.AddNode("result", "register-int");
+        def.AddNode("result", "register");
         def.Connect("int", "src", Ports.Output, "fold", Ports.Input);
         def.Connect("int", "fold", Ports.Output, "result", Ports.Input);
 
         var graph = BuildFactory().Build(def);
-        var result = (Register<int>)graph.Nodes[2];
+        var result = (Register)graph.Nodes[2];
 
         graph.Evaluate();
 
-        Assert.That(result.GetValue(), Is.EqualTo(15));
+        Assert.That(result.GetValue()!.AsInt(), Is.EqualTo(15));
     }
 
     [Test]
-    public void TestFactory_RegisterConnectionType_CustomType()
+    public void TestFactory_RegisterConnectionType_CustomAlias()
     {
         var factory = BuildFactory();
-        factory.RegisterConnectionType("int2", g => g.CreateConnection<int>());
+        factory.RegisterConnectionType("int2", g => g.CreateConnection());
 
         var def = new GraphDefinition();
-        def.AddNode("src", "pulse-int", ("value", "3"));
-        def.AddNode("result", "register-int");
+        def.AddNode("src", "pulse", ("value", "3"));
+        def.AddNode("result", "register");
         def.Connect("int2", "src", Ports.Output, "result", Ports.Input);
 
         var graph = factory.Build(def);
-        var result = (Register<int>)graph.Nodes[1];
+        var result = (Register)graph.Nodes[1];
 
         graph.Evaluate();
 
-        Assert.That(result.GetValue(), Is.EqualTo(3));
+        Assert.That(result.GetValue()!.AsInt(), Is.EqualTo(3));
     }
 }

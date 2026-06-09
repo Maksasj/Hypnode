@@ -1,22 +1,25 @@
 using Hypnode.Core;
+using Hypnode.Core.Modules;
+using Hypnode.Core.Types;
 using System.Collections;
 
 namespace Hypnode.System.Common;
 
 // Emits its current value each tick, then latches the next incoming value.
 // The one-tick lag is what makes feedback cycles in the graph schedulable.
-public class DelayNode<T> : INode
+[HypnodeNode("delay", "Emits seed on first tick, then echoes each input next tick")]
+public class DelayNode : INode
 {
-    private T _current;
-    private Connection<T>? _inputPort = null;
-    private Connection<T>? _outputPort = null;
+    private HypnodeValue _current;
+    private Connection<HypnodeValue>? _inputPort;
+    private Connection<HypnodeValue>? _outputPort;
 
-    public DelayNode(T initialValue) => _current = initialValue;
+    public DelayNode(HypnodeValue initialValue) => _current = initialValue;
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Ports.Input && connection is Connection<T> con0) _inputPort = con0;
-        if (portName == Ports.Output && connection is Connection<T> con1) _outputPort = con1;
+        if (portName == Ports.Input) NodeExtensions.TryAttach(ref _inputPort, connection);
+        if (portName == Ports.Output) NodeExtensions.TryAttach(ref _outputPort, connection);
         return this;
     }
 

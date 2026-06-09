@@ -1,5 +1,6 @@
 using Hypnode.Core;
 using Hypnode.Core.Graph;
+using Hypnode.Core.Types;
 using Hypnode.System.Common;
 using Moq;
 
@@ -12,9 +13,9 @@ public class VoidTests
     public void TestVoid_SingleConnection()
     {
         var graph = new CoroutineNodeGraph();
-        var conn = graph.CreateConnection<byte>();
-        graph.AddNode(new PulseValue<byte>(1)).SetPort(Ports.Output, conn);
-        graph.AddNode(new VoidSink<byte>()).SetPort(VoidSink<byte>.Input, conn);
+        var conn = graph.CreateConnection();
+        graph.AddNode(new PulseValue(new ByteValue(1))).SetPort(Ports.Output, conn);
+        graph.AddNode(new VoidSink()).SetPort(VoidSink.Input, conn);
         graph.Evaluate();
         Assert.Pass();
     }
@@ -23,13 +24,13 @@ public class VoidTests
     public void TestVoid_SingleConnection_TryReceiveOnce()
     {
         var graph = new CoroutineNodeGraph();
-        var conn = new Mock<Connection<int>>();
-        conn.Setup(c => c.TryReceive(out It.Ref<int>.IsAny)).Returns(false);
-        graph.AddNode(new VoidSink<int>()).SetPort(VoidSink<int>.Input, conn.Object);
+        var conn = new Mock<Connection<HypnodeValue>>();
+        conn.Setup(c => c.TryReceive(out It.Ref<HypnodeValue>.IsAny)).Returns(false);
+        graph.AddNode(new VoidSink()).SetPort(VoidSink.Input, conn.Object);
 
         graph.Evaluate();
 
-        conn.Verify(c => c.TryReceive(out It.Ref<int>.IsAny), Times.Once);
+        conn.Verify(c => c.TryReceive(out It.Ref<HypnodeValue>.IsAny), Times.Once);
     }
 
     [TestCase(0)]
@@ -39,32 +40,32 @@ public class VoidTests
     public void TestVoid_MultipleConnections_TryReceiveOnce(int count)
     {
         var graph = new CoroutineNodeGraph();
-        var sink = graph.AddNode(new VoidSink<int>());
+        var sink = graph.AddNode(new VoidSink());
         var mocks = Enumerable.Range(0, count).Select(_ =>
         {
-            var m = new Mock<Connection<int>>();
-            m.Setup(c => c.TryReceive(out It.Ref<int>.IsAny)).Returns(false);
-            sink.SetPort(VoidSink<int>.Input, m.Object);
+            var m = new Mock<Connection<HypnodeValue>>();
+            m.Setup(c => c.TryReceive(out It.Ref<HypnodeValue>.IsAny)).Returns(false);
+            sink.SetPort(VoidSink.Input, m.Object);
             return m;
         }).ToList();
 
         graph.Evaluate();
 
         foreach (var m in mocks)
-            m.Verify(c => c.TryReceive(out It.Ref<int>.IsAny), Times.Once());
+            m.Verify(c => c.TryReceive(out It.Ref<HypnodeValue>.IsAny), Times.Once());
     }
 
     [Test]
     public void TestVoid_MultipleConnections()
     {
         var graph = new CoroutineNodeGraph();
-        var conn1 = graph.CreateConnection<byte>();
-        var conn2 = graph.CreateConnection<byte>();
-        graph.AddNode(new PulseValue<byte>(1)).SetPort(Ports.Output, conn1);
-        graph.AddNode(new PulseValue<byte>(2)).SetPort(Ports.Output, conn2);
-        graph.AddNode(new VoidSink<byte>())
-            .SetPort(VoidSink<byte>.Input, conn1)
-            .SetPort(VoidSink<byte>.Input, conn2);
+        var conn1 = graph.CreateConnection();
+        var conn2 = graph.CreateConnection();
+        graph.AddNode(new PulseValue(new ByteValue(1))).SetPort(Ports.Output, conn1);
+        graph.AddNode(new PulseValue(new ByteValue(2))).SetPort(Ports.Output, conn2);
+        graph.AddNode(new VoidSink())
+            .SetPort(VoidSink.Input, conn1)
+            .SetPort(VoidSink.Input, conn2);
         graph.Evaluate();
         Assert.Pass();
     }

@@ -1,17 +1,18 @@
 using Hypnode.Core;
+using Hypnode.Core.Types;
 using System.Collections;
 
 namespace Hypnode.System.Common;
 
-public class VoidSink<T> : INode
+public class VoidSink : INode
 {
     public const string Input = "_";
 
-    private readonly List<Connection<T>> _inputPorts = [];
+    private readonly List<Connection<HypnodeValue>> _inputPorts = [];
 
     public INode SetPort(string portName, IConnection connection)
     {
-        if (portName == Input && connection is Connection<T> conn)
+        if (portName == Input && connection is Connection<HypnodeValue> conn)
             _inputPorts.Add(conn);
         return this;
     }

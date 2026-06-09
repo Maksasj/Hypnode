@@ -1,4 +1,5 @@
 using Hypnode.Core.Graph;
+using Hypnode.Core.Types;
 
 namespace Hypnode.Runtime;
 
@@ -17,9 +18,9 @@ internal static class Program
 
         return subcommand switch
         {
-            "run"     => RunCommand(rest),
+            "run" => RunCommand(rest),
             "modules" => ModulesCommand(rest),
-            _         => UnknownCommand(subcommand),
+            _ => UnknownCommand(subcommand),
         };
     }
 
@@ -97,20 +98,27 @@ internal static class Program
         }
 
         var factory = new NodeFactory();
-        var loaded = ModuleLoader.LoadAll(modulePaths, factory);
+        var result = ModuleLoader.LoadAll(modulePaths, factory);
 
-        if (loaded.Count == 0)
+        if (result.Modules.Count == 0)
         {
             Console.WriteLine("No modules loaded.");
             return 0;
         }
 
-        Console.WriteLine($"Loaded {loaded.Count} module(s):\n");
+        Console.WriteLine($"Loaded {result.Modules.Count} module(s):\n");
 
-        foreach (var m in loaded)
+        foreach (var m in result.Modules)
         {
             Console.WriteLine($"  {m.Meta.Name} v{m.Meta.Version}");
             Console.WriteLine($"  {m.Meta.Description}");
+
+            if (m.Types.Count > 0)
+            {
+                Console.WriteLine($"\n  Types ({m.Types.Count}):");
+                foreach (var t in m.Types)
+                    Console.WriteLine($"    {t.Name,-20} {DescribeType(t.Type)}");
+            }
 
             if (m.Nodes.Count > 0)
             {
@@ -132,6 +140,16 @@ internal static class Program
         return 0;
     }
 
+    static string DescribeType(HypnodeType type) => type switch
+    {
+        HypnodeType.Primitive(var name) => $"primitive",
+        HypnodeType.Struct(var name, var fields) => $"struct  {{ {string.Join(", ", fields.Select(f => $"{f.Name}: {f.Type}"))} }}",
+        HypnodeType.Array(var elem) => $"array   of {elem}",
+        HypnodeType.Tuple(var elems) => $"tuple   ({string.Join(", ", elems)})",
+        HypnodeType.Union(var name, var variants) => $"union   {string.Join(" | ", variants)}",
+        _ => type.ToString() ?? "unknown",
+    };
+
     static int UnknownCommand(string cmd)
     {
         Console.Error.WriteLine($"error: unknown command '{cmd}'");
@@ -151,7 +169,7 @@ internal static class Program
 
             Commands:
               run        Load modules and evaluate a graph XML file
-              modules    List all loaded modules
+              modules    List all loaded modules with their types and nodes
 
             Options:
               --module <dll>   Load a module DLL (may be repeated).
